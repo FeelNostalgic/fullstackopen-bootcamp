@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Header, Header2 } from './components/Headers'
-import Filter from './components/Filter'  
+import Filter from './components/Filter'
 import PersonForm from './components/PersonForm'
 import Persons from './components/Persons'
 import phoneService from './services/phones'
@@ -18,7 +18,7 @@ const App = () => {
         setPersons(initialPeople)
       })
   }
-  
+
   useEffect(hook, [])
 
   const handleNameChange = (event) => {
@@ -38,14 +38,28 @@ const App = () => {
     if (persons.some(person => person.name === newName)) {
       alert(`${newName} is already in the phonebook`)
     } else {
-      const personObject = {name: newName, number: newNumber  }
+      const personObject = { name: newName, number: newNumber }
       phoneService
-      .create(personObject)
-      .then(returnedPerson => {
-        setPersons(persons.concat(returnedPerson))
-        setNewName('')
-        setNewNumber('')
-      })
+        .create(personObject)
+        .then(returnedPerson => {
+          setPersons(persons.concat(returnedPerson))
+          setNewName('')
+          setNewNumber('')
+        })
+    }
+  }
+
+  const handleDelete = (id) => {
+    const person = persons.find(person => person.id === id)
+    if (window.confirm(`Delete ${person.name}?`)) {
+      phoneService
+        .remove(id)
+        .then(_ => {
+          setPersons(persons.filter(person => person.id !== id))
+        })
+        .catch(_ => {
+          alert(`the person '${person.name}' was already removed from server`)
+        })
     }
   }
 
@@ -58,7 +72,7 @@ const App = () => {
       <Header2 text='Add a new' />
       <PersonForm newName={newName} newNumber={newNumber} handleNameChange={handleNameChange} handleNumberChange={handleNumberChange} addPerson={addPerson} />
       <Header2 text='Numbers' />
-      <Persons persons={filteredPersons} />
+      <Persons persons={filteredPersons} handleDelete={handleDelete} />
     </div>
   )
 }
