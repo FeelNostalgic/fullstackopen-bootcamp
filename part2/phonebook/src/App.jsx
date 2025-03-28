@@ -14,7 +14,7 @@ const App = () => {
   const [newNumber, setNewNumber] = useState('')
   const [filter, setFilter] = useState('')
   const [successMessage, setSuccessMessage] = useState(null)
-
+  const [errorMessage, setErrorMessage] = useState(null)
   const hook = () => {
     phoneService
       .getAll()
@@ -49,6 +49,7 @@ const App = () => {
             setPersons(persons.map(p => p.id !== changedPerson.id ? p : returnedPerson))
             setNewName('')
             setNewNumber('')
+            setErrorMessage(null)
             setSuccessMessage(`Updated ${newName}`)
             setTimeout(() => {
               setSuccessMessage(null)
@@ -64,6 +65,7 @@ const App = () => {
           setNewName('')
           setNewNumber('')
           setSuccessMessage(`Added ${newName}`)
+          setErrorMessage(null)
           setTimeout(() => {
             setSuccessMessage(null)
           }, 5000)
@@ -80,7 +82,11 @@ const App = () => {
           setPersons(persons.filter(person => person.id !== id))
         })
         .catch(_ => {
-          alert(`the person '${person.name}' was already removed from server`)
+          setSuccessMessage(null)
+          setErrorMessage(`Information of ${person.name} has already been removed from server`)
+          setTimeout(() => {
+            setErrorMessage(null)
+          }, 5000)
         })
     }
   }
@@ -90,7 +96,8 @@ const App = () => {
   return (
     <div>
       <Header text='Phonebook' />
-      <Notification message={successMessage} />
+      <Notification message={successMessage} className='success' />
+      <Notification message={errorMessage} className='error' />
       <Filter filter={filter} handleFilterChange={handleFilterChange} />
       <Header2 text='Add a new' />
       <PersonForm newName={newName} newNumber={newNumber} handleNameChange={handleNameChange} handleNumberChange={handleNumberChange} addPerson={addPerson} />
