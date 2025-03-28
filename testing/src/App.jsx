@@ -23,7 +23,7 @@ const History = ({ allClicks }) => {
 }
 
 const App = () => {
-  const [notes, setNotes] = useState([])
+  const [notes, setNotes] = useState(null)
   const [newNotes, setNewNotes] = useState('')
   const [showAll, setShowAll] = useState(true)
   const [errorMessage, setErrorMessage] = useState(null)
@@ -111,6 +111,10 @@ const App = () => {
         <em>Note app, 2025</em>
       </div>
     )
+  }
+
+  if (!notes) {
+    return null
   }
 
   return (
