@@ -5,14 +5,22 @@ const Header = ({text}) => <h1>{text}</h1>
 const Button = ({onClick, text}) => <button onClick={onClick}>{text}</button>
 
 const Statistics = ({good, neutral, bad}) => {
+  if(good + neutral + bad === 0) {
+    return(
+      <div>
+        <p>No feedback given</p>
+      </div>
+    )
+  }
+
   return(
     <div>
       <p>good {good}</p>
       <p>neutral {neutral}</p>
       <p>bad {bad}</p>
       <p>all {good + neutral + bad}</p>
-      <p>average {(good - bad) / (good + neutral + bad)}</p>
-      <p>positive {good / (good + neutral + bad)}</p>
+      <p>average {((good - bad) / (good + neutral + bad)).toFixed(2)}</p>
+      <p>positive {((good / (good + neutral + bad)) * 100).toFixed(2)}%</p>
     </div>
   )
 }
