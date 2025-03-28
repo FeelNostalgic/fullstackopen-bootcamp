@@ -4,6 +4,8 @@ import Button from './components/Button'
 import { Header } from './components/Headers'
 import noteService from './services/notes'
 
+import './index.css'
+
 const History = ({ allClicks }) => {
   if (allClicks.length === 0) {
     return (
@@ -19,15 +21,28 @@ const History = ({ allClicks }) => {
   )
 }
 
+const Notification = ({ message }) => {
+  if (message === null) {
+    return null
+  }
+
+  return (
+    <div className='error'>
+      {message}
+    </div>
+  )
+}
+
 const App = () => {
   const [notes, setNotes] = useState([])
   const [newNotes, setNewNotes] = useState('')
   const [showAll, setShowAll] = useState(true)
+  const [errorMessage, setErrorMessage] = useState(null)
 
-  const [left, setLeft] = useState(0)
-  const [right, setRight] = useState(0)
-  const [allClicks, setAll] = useState([])
-  const [total, setTotal] = useState(0)
+  // const [left, setLeft] = useState(0)
+  // const [right, setRight] = useState(0)
+  // const [allClicks, setAll] = useState([])
+  // const [total, setTotal] = useState(0)
 
   const hook = () => {
     // console.log('effect')
@@ -40,19 +55,19 @@ const App = () => {
 
   useEffect(hook, [])
 
-  const handleLeftClick = () => {
-    setAll(allClicks.concat('L'))
-    const updatedLeft = left + 1
-    setLeft(updatedLeft)
-    setTotal(updatedLeft + right)
-  }
+  // const handleLeftClick = () => {
+  //   setAll(allClicks.concat('L'))
+  //   const updatedLeft = left + 1
+  //   setLeft(updatedLeft)
+  //   setTotal(updatedLeft + right)
+  // }
 
-  const handleRightClick = () => {
-    setAll(allClicks.concat('R'))
-    const updatedRight = right + 1
-    setRight(updatedRight)
-    setTotal(left + updatedRight)
-  }
+  // const handleRightClick = () => {
+  //   setAll(allClicks.concat('R'))
+  //   const updatedRight = right + 1
+  //   setRight(updatedRight)
+  //   setTotal(left + updatedRight)
+  // }
 
   const handleNoteChange = (event) => {
     setNewNotes(event.target.value)
@@ -83,9 +98,10 @@ const App = () => {
         setNotes(notes.map(n => n.id !== id ? n : returnedNote)) // replace the old note with the updated note
       })
       .catch(error => {
-        alert(
-          `the note '${note.content}' was already removed from server`
-        )
+          setErrorMessage(`Note '${note.content}' was already removed from server`)
+          setTimeout(() => {
+            setErrorMessage(null)
+          }, 5000)
         setNotes(notes.filter(n => n.id !== id))
       })
   }
@@ -103,7 +119,9 @@ const App = () => {
       <History allClicks={allClicks} />
       <p>total {total}</p> 
       */}
+
       <Header text='Notes' />
+      <Notification message={errorMessage} />
       <Button onClick={() => setShowAll(!showAll)} text={showAll ? 'Show important' : 'Show all'} />
       <ul>
         {notesToShow.map(note =>
