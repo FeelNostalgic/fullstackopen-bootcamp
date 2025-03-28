@@ -1,4 +1,7 @@
 import { useState } from 'react'
+import Note from './components/Note'
+
+const Header = ({text}) => <h1>{text}</h1>
 
 const Button = ({onClick, text}) => <button onClick={onClick}>{text}</button>
 
@@ -17,7 +20,8 @@ const History = ({allClicks}) => {
   )
 }
 
-const App = () => {
+const App = ({notes}) => {
+  
   const [left, setLeft] = useState(0)
   const [right, setRight] = useState(0)
   const [allClicks, setAll] = useState([])
@@ -45,6 +49,12 @@ const App = () => {
       {right}
       <History allClicks={allClicks} />
       <p>total {total}</p>
+      <Header text='Notes' />
+      <ul>
+        {notes.map(note => 
+          <Note key={note.id} note={note} />
+        )}
+      </ul>
     </div>
   )
 }
