@@ -1,9 +1,10 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Note from './components/Note'
 import Button from './components/Button'
 import { Header } from './components/Headers'
+import axios from 'axios'
 
-const History = ({allClicks}) => {
+const History = ({ allClicks }) => {
   if (allClicks.length === 0) {
     return (
       <div>
@@ -18,8 +19,9 @@ const History = ({allClicks}) => {
   )
 }
 
-const App = (props) => {
-  const [notes, setNotes] = useState(props.notes)
+const App = () => {
+
+  const [notes, setNotes] = useState([])
   const [newNotes, setNewNotes] = useState('')
   const [showAll, setShowAll] = useState(true)
 
@@ -27,6 +29,18 @@ const App = (props) => {
   const [right, setRight] = useState(0)
   const [allClicks, setAll] = useState([])
   const [total, setTotal] = useState(0)
+
+  const hook = () => {
+    console.log('effect')
+    axios
+      .get('http://localhost:3001/notes')
+      .then(response => {
+        console.log('promise fulfilled')
+        setNotes(response.data)
+      })
+  }
+  
+  useEffect(hook, [])
 
   const handleLeftClick = () => {
     setAll(allClicks.concat('L'))
@@ -72,7 +86,7 @@ const App = (props) => {
       <Header text='Notes' />
       <Button onClick={() => setShowAll(!showAll)} text={showAll ? 'Show important' : 'Show all'} />
       <ul>
-        {notesToShow.map(note => 
+        {notesToShow.map(note =>
           <Note key={note.id} note={note} />
         )}
       </ul>
