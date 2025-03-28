@@ -12,6 +12,7 @@ const StatisticsLine = ({ text, value }) => {
     </tr>
   )
 }
+
 const Statistics = ({ good, neutral, bad }) => {
   if (good + neutral + bad === 0) {
     return (
