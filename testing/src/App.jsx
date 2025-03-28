@@ -98,10 +98,10 @@ const App = () => {
         setNotes(notes.map(n => n.id !== id ? n : returnedNote)) // replace the old note with the updated note
       })
       .catch(error => {
-          setErrorMessage(`Note '${note.content}' was already removed from server`)
-          setTimeout(() => {
-            setErrorMessage(null)
-          }, 5000)
+        setErrorMessage(`Note '${note.content}' was already removed from server`)
+        setTimeout(() => {
+          setErrorMessage(null)
+        }, 5000)
         setNotes(notes.filter(n => n.id !== id))
       })
   }
@@ -109,6 +109,20 @@ const App = () => {
   const notesToShow = showAll
     ? notes
     : notes.filter(note => note.important === true)
+
+  const Footer = () => {
+    const footerStyle = {
+      color: 'green',
+      fontStyle: 'italic',
+      fontSize: 16
+    }
+    return (
+      <div style={footerStyle}>
+        <br />
+        <em>Note app, 2025</em>
+      </div>
+    )
+  }
 
   return (
     <div>
@@ -136,6 +150,7 @@ const App = () => {
         <input value={newNotes} placeholder='write note content here' onChange={handleNoteChange} />
         <button type='submit'>save</button>
       </form>
+      <Footer />
     </div>
   )
 }
