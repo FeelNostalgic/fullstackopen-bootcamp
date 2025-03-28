@@ -3,7 +3,7 @@ import { Header, Header2 } from './components/Headers'
 import Filter from './components/Filter'
 import PersonForm from './components/PersonForm'
 import Persons from './components/Persons'
-import phoneService from './services/phones'
+import phoneService from './services/phonebook'
 
 const App = () => {
   const [persons, setPersons] = useState([])
@@ -36,7 +36,17 @@ const App = () => {
   const addPerson = (event) => {
     event.preventDefault()
     if (persons.some(person => person.name === newName)) {
-      alert(`${newName} is already in the phonebook`)
+      if (window.confirm(`${newName} is already in the phonebook. Replace the old number with a new one?`)) {
+        const person = persons.find(person => person.name === newName)
+        const changedPerson = { ...person, number: newNumber }
+        phoneService
+          .update(changedPerson.id, changedPerson)
+          .then(returnedPerson => {
+            setPersons(persons.map(p => p.id !== changedPerson.id ? p : returnedPerson))
+            setNewName('')
+            setNewNumber('')
+          })
+      }
     } else {
       const personObject = { name: newName, number: newNumber }
       phoneService
