@@ -1,9 +1,7 @@
 import { useState } from 'react'
 import Note from './components/Note'
-
-const Header = ({text}) => <h1>{text}</h1>
-
-const Button = ({onClick, text}) => <button onClick={onClick}>{text}</button>
+import Button from './components/Button'
+import { Header } from './components/Headers'
 
 const History = ({allClicks}) => {
   if (allClicks.length === 0) {
@@ -43,7 +41,6 @@ const App = (props) => {
     setRight(updatedRight)
     setTotal(left + updatedRight)
   }
-
 
   const addNote = (event) => {
     event.preventDefault()
