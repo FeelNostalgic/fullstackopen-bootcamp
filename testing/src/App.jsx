@@ -3,6 +3,7 @@ import Note from './components/Note'
 import Button from './components/Button'
 import { Header } from './components/Headers'
 import noteService from './services/notes'
+import Notification from './components/Notification'
 
 import './index.css'
 
@@ -17,18 +18,6 @@ const History = ({ allClicks }) => {
   return (
     <div>
       button press history: {allClicks.join(' ')}
-    </div>
-  )
-}
-
-const Notification = ({ message }) => {
-  if (message === null) {
-    return null
-  }
-
-  return (
-    <div className='error'>
-      {message}
     </div>
   )
 }
