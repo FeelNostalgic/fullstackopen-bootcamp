@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import Note from './components/Note'
 import Button from './components/Button'
 import { Header } from './components/Headers'
-import axios from 'axios'
+import noteService from './services/notes'
 
 const History = ({ allClicks }) => {
   if (allClicks.length === 0) {
@@ -30,15 +30,14 @@ const App = () => {
   const [total, setTotal] = useState(0)
 
   const hook = () => {
-    console.log('effect')
-    axios
-      .get('http://localhost:3001/notes')
-      .then(response => {
-        console.log('promise fulfilled')
-        setNotes(response.data)
+    // console.log('effect')
+    noteService
+      .getAll() // getAll is a function that returns a promise
+      .then(initialNotes => {
+        setNotes(initialNotes)
       })
   }
-  
+
   useEffect(hook, [])
 
   const handleLeftClick = () => {
@@ -55,19 +54,40 @@ const App = () => {
     setTotal(left + updatedRight)
   }
 
+  const handleNoteChange = (event) => {
+    setNewNotes(event.target.value)
+  }
+
   const addNote = (event) => {
     event.preventDefault()
     const noteObject = {
       content: newNotes,
-      important: Math.random() > 0.5,
-      id: String(notes.length + 1),
+      important: Math.random() > 0.5
     }
-    setNotes(notes.concat(noteObject))
-    setNewNotes('')
+
+    noteService
+      .create(noteObject)
+      .then(returnedNote => {
+        // console.log(response)
+        setNotes(notes.concat(returnedNote))
+        setNewNotes('')
+      })
   }
 
-  const handleNoteChange = (event) => {
-    setNewNotes(event.target.value)
+  const toggleImportanceOf = (id) => {
+    const note = notes.find(n => n.id === id)
+    const changeNote = { ...note, important: !note.important } // ...note => All note with important changed
+    noteService
+      .update(id, changeNote)
+      .then(returnedNote => {
+        setNotes(notes.map(n => n.id !== id ? n : returnedNote)) // replace the old note with the updated note
+      })
+      .catch(error => {
+        alert(
+          `the note '${note.content}' was already removed from server`
+        )
+        setNotes(notes.filter(n => n.id !== id))
+      })
   }
 
   const notesToShow = showAll
@@ -76,17 +96,22 @@ const App = () => {
 
   return (
     <div>
-      {left}
+      {/* {left}
       <Button onClick={handleLeftClick} text='left' />
       <Button onClick={handleRightClick} text='right' />
       {right}
       <History allClicks={allClicks} />
-      <p>total {total}</p>
+      <p>total {total}</p> 
+      */}
       <Header text='Notes' />
       <Button onClick={() => setShowAll(!showAll)} text={showAll ? 'Show important' : 'Show all'} />
       <ul>
         {notesToShow.map(note =>
-          <Note key={note.id} note={note} />
+          <Note
+            key={note.id}
+            note={note}
+            toggleImportance={() => toggleImportanceOf(note.id)}
+          />
         )}
       </ul>
       <form onSubmit={addNote}>
