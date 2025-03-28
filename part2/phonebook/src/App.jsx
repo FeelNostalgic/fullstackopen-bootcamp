@@ -3,7 +3,7 @@ import { Header, Header2 } from './components/Headers'
 import Filter from './components/Filter'  
 import PersonForm from './components/PersonForm'
 import Persons from './components/Persons'
-import axios from 'axios'
+import phoneService from './services/phones'
 
 const App = () => {
   const [persons, setPersons] = useState([])
@@ -12,10 +12,10 @@ const App = () => {
   const [filter, setFilter] = useState('')
 
   const hook = () => {
-    axios
-      .get('http://localhost:3001/persons')
-      .then(response => {
-        setPersons(response.data)
+    phoneService
+      .getAll()
+      .then(initialPeople => {
+        setPersons(initialPeople)
       })
   }
   
@@ -39,10 +39,10 @@ const App = () => {
       alert(`${newName} is already in the phonebook`)
     } else {
       const personObject = {name: newName, number: newNumber  }
-      axios
-      .post('http://localhost:3001/persons', personObject)
-      .then(response => {
-        setPersons(persons.concat(response.data))
+      phoneService
+      .create(personObject)
+      .then(returnedPerson => {
+        setPersons(persons.concat(returnedPerson))
         setNewName('')
         setNewNumber('')
       })
