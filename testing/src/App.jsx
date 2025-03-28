@@ -20,7 +20,6 @@ const History = ({ allClicks }) => {
 }
 
 const App = () => {
-
   const [notes, setNotes] = useState([])
   const [newNotes, setNewNotes] = useState('')
   const [showAll, setShowAll] = useState(true)
