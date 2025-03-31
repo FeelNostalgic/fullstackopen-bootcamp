@@ -28,9 +28,16 @@ app.get('/api/notes', (request, response) => {
 
 app.get('/api/notes/:id', (request, response) => {
     Note.findById(request.params.id).then((note) => {
-        response.json(note)
+        if (note) {
+            response.json(note)
+        } else {
+            response.status(404).end()
+        }
     })
-    .catch(error => response.status(404).end())
+    .catch(error =>{
+        console.log(error)
+        response.status(400).send({ error: 'malformatted id' })
+    })
 })
 
 // POST request to create a new note
@@ -57,7 +64,7 @@ app.delete('/api/notes/:id', (request, response) => {
     Note.findByIdAndDelete(request.params.id).then(result => {
         response.status(204).end()
     })
-    .catch(error => response.status(404).end())
+    .catch(error => response.status(404).end()  )
 })
 
 
