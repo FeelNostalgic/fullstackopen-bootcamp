@@ -7,10 +7,12 @@
     "start": "node index.js",
     "dev": "node --watch index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build:ui": "@powershell Remove-Item -Recurse -Force dist && cd ../frontend && npm run build && @powershell Copy-Item dist -Recurse ../NodeJS",
+    "build:ui": "@powershell Remove-Item -Recurse -Force dist && cd ../frontend && npm run build && @powershell Copy-Item dist -Recurse ../backend",
     "deploy": "fly deploy",
     "deploy:full": "npm run build:ui && npm run deploy",
-    "logs:prod": "fly logs"
+    "logs:prod": "fly logs",
+    "scale:1" : "fly scale count 1",
+    "open": "fly apps open"
   },
   "keywords": [],
   "author": "",
@@ -19,5 +21,8 @@
   "dependencies": {
     "express": "^4.21.2",
     "morgan": "^1.10.0"
+  },
+  "devDependencies": {
+    "@flydotio/dockerfile": "^0.7.9"
   }
 }
