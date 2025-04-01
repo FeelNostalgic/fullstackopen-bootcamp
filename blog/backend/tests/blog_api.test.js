@@ -8,6 +8,7 @@ const api = supertest(app)
 const helper = require('./test_helper')
 
 const Blog = require('../models/blog')
+const { log } = require('node:console')
 
 describe('when there are same notes saved initally', () => {
     beforeEach(async () => {
@@ -24,6 +25,18 @@ describe('when there are same notes saved initally', () => {
     test('all blogs are returned', async () => {
         const response = await api.get('/api/blogs')
         assert.strictEqual(response.body.length, helper.initialBlogs.length)
+    })
+
+    test('verify that the unique identifier property is named id, not _id', async () => {
+        const response = await api.get('/api/blogs')
+        response.body.forEach(blog => {
+            assert(blog.id)
+            assert(!blog._id)
+        })
+    })
+
+    describe('viewing a specific blog', () => {
+        //
     })
 })
 
