@@ -44,7 +44,9 @@ describe('when there are same notes saved initally', () => {
                 likes: 10
             }
 
-            await api.post('/api/blogs').send(newBlog)
+            await api
+            .post('/api/blogs')
+            .send(newBlog)
             .expect(201)
             .expect('Content-Type', /application\/json/)
 
@@ -70,7 +72,39 @@ describe('when there are same notes saved initally', () => {
 
             assert.strictEqual(response.body.likes, 0)
         })
+
+        test('if title is missing, it is not added to the database', async()=>{
+            const newBlog = {
+                author: 'Test Author 3',
+                url: 'https://test3.com',
+                likes: 15
+            }
+
+            await api.post('/api/blogs')
+            .send(newBlog)
+            .expect(400)
+
+            const blogsAtEnd = await helper.blogsInDb()
+            assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length)
+        })
+
+        test('if url is missing, it is not added to the database', async()=>{
+            const newBlog = {
+                title: 'Test Blog 4',
+                author: 'Test Author 4',
+                likes: 20
+            }
+
+            await api.post('/api/blogs')
+            .send(newBlog)
+            .expect(400)
+
+            const blogsAtEnd = await helper.blogsInDb()
+            assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length)
+        })
     })
+
+
 })
 
 after(async () => {
