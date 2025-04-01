@@ -7,15 +7,16 @@ const api = supertest(app)
 
 const helper = require('./test_helper')
 
-const bcrypt = require('bcryptjs')
+const bcryptjs = require('bcryptjs')
+const Blog = require('../models/blog')
 const User = require('../models/user')
 
 describe('when there is initially one user in db', () => {
   beforeEach(async () => {
     await User.deleteMany({})
 
-    const passwordHash = await bcrypt.hash('sekret', 10)
-    const user = new User({ username: 'root', passwordHash })
+    const passwordHash = await bcryptjs.hash(helper.initialUsers[0].password, 10)
+    const user = new User({ username: helper.initialUsers[0].username, passwordHash })
 
     await user.save()
   })
@@ -66,10 +67,10 @@ describe('when there is initially one user in db', () => {
   test('creation fails with proper statuscode (400) and message if password is too short', async () => {
     const usersAtStart = await helper.usersInDb()
 
-    const newUser = {   
-        username: 'testUser',
-        name: 'test User',
-        password: 'ds'
+    const newUser = {
+      username: 'testUser',
+      name: 'test User',
+      password: 'ds'
     }
 
     const result = await api
@@ -103,6 +104,78 @@ describe('when there is initially one user in db', () => {
     assert(result.body.error.includes('username must be at least 3 characters long'))
 
     assert.strictEqual(usersAtEnd.length, usersAtStart.length)
+  })
+})
+
+describe('when logging in', () => {
+  beforeEach(async () => {
+    await User.deleteMany({})
+    await Blog.deleteMany({})
+
+    const passwordHash = await bcryptjs.hash(helper.initialUsers[0].password, 10)
+    const user = new User({ username: helper.initialUsers[0].username, passwordHash })
+
+    await user.save()
+  })
+
+  test('succeeds with correct credentials', async () => {
+
+    const response = await api
+      .post('/api/login')
+      .send(helper.initialUsers[0])
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
+
+    assert(response.body.token)
+    assert.strictEqual(response.body.username, helper.initialUsers[0].username)
+  })
+
+  test('fails with incorrect credentials', async () => {
+    const loginData = {
+      username: helper.initialUsers[0].username,
+      password: 'incorrectPassword'
+    }
+
+    const response = await api
+      .post('/api/login')
+      .send(loginData)
+      .expect(401)
+      .expect('Content-Type', /application\/json/)
+
+    assert(response.body.error.includes('invalid username or password'))
+  })
+
+  test('create blog succeeds with valid token', async () => {
+    const loginResponse = await api
+      .post('/api/login')
+      .send(helper.initialUsers[0])
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
+
+    const token = loginResponse.body.token
+
+    const newBlog = {
+      title: 'Test Blog',
+      author: 'Test Author',
+      url: 'https://test.com',
+      likes: 10
+    }
+
+    const response = await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .set('Authorization', `Bearer ${token}`)
+      .expect(201)
+      .expect('Content-Type', /application\/json/)
+
+    const blogsAtEnd = await helper.blogsInDb()
+    assert.strictEqual(blogsAtEnd.length, 1)
+    assert.strictEqual(response.body.title, newBlog.title)
+    assert.strictEqual(response.body.author, newBlog.author)
+    assert.strictEqual(response.body.url, newBlog.url)
+    assert.strictEqual(response.body.likes, newBlog.likes)
+    const userId = await helper.userId(loginResponse.body.username)
+    assert.strictEqual(response.body.user.toString(), userId.toString())
   })
 })
 
