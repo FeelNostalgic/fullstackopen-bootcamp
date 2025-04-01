@@ -1,18 +1,42 @@
 const blogRouter = require('express').Router()
 const Blog = require('../models/blog')
+const jwt = require('jsonwebtoken')
+const User = require('../models/user')
 
+const getTokenFrom = request => {
+    const authorization = request.get('authorization')
+    if (authorization && authorization.startsWith('Bearer ')) {
+        return authorization.replace('Bearer ', '')
+    }
+}
+
+// GET: get all blogs
 blogRouter.get('', async (request, response) => {
-    const blogs = await Blog.find({})
+    const blogs = await Blog.find({}).populate('user', { username: 1, name: 1 })
     response.json(blogs)
 })
 
+// POST: create a new blog
 blogRouter.post('', async (request, response) => {
-    const blog = new Blog(request.body)
+    const body = request.body
+
+    const user = await User.findById(request.body.userId)
+
+    const blog = new Blog({
+        title: body.title,
+        author: body.author,
+        url: body.url,
+        likes: body.likes,
+        user: user._id
+    })
 
     const savedBlog = await blog.save()
+    user.blogs = user.blogs.concat(savedBlog._id)
+    await user.save()
     response.status(201).json(savedBlog)
 })
 
+// DELETE: delete a blog
 blogRouter.delete('/:id', async (request, response) => {
     const deletedBlog = await Blog.findByIdAndDelete(request.params.id)
 
@@ -23,6 +47,7 @@ blogRouter.delete('/:id', async (request, response) => {
     response.status(204).end()
 })
 
+// PUT: update a blog   
 blogRouter.put('/:id', async (request, response) => {
     const { title, author, url, likes } = request.body
 
