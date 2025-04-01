@@ -1,6 +1,5 @@
 const blogRouter = require('express').Router()
 const Blog = require('../models/blog')
-const jwt = require('jsonwebtoken')
 const User = require('../models/user')
 
 // GET: get all blogs
@@ -13,6 +12,10 @@ blogRouter.get('', async (request, response) => {
 blogRouter.post('', async (request, response) => {
     const body = request.body
     const user = await User.findById(request.user)
+
+    if(!user){
+        return response.status(401).json({ error: 'unauthorized' })
+    }
 
     const blog = new Blog({
         title: body.title,
@@ -33,6 +36,9 @@ blogRouter.delete('/:id', async (request, response) => {
     const user = await User.findById(request.user)
     
     const blog = await Blog.findById(request.params.id)
+    if(!blog){
+        return response.status(404).end()
+    }
 
     if (blog.user.toString() !== user.id.toString()) {
         return response.status(401).json({ error: 'unauthorized' })
@@ -51,11 +57,17 @@ blogRouter.delete('/:id', async (request, response) => {
 blogRouter.put('/:id', async (request, response) => {
     const { title, author, url, likes } = request.body
 
+    const user = await User.findById(request.user)
+
     const blog = await Blog.findById(request.params.id)
     if (!blog) {        
         return response.status(404).end()
     }
 
+    if (blog.user.toString() !== user.id.toString()) {
+        return response.status(401).json({ error: 'unauthorized' })
+    }
+    
     blog.title = title
     blog.author = author
     blog.url = url
