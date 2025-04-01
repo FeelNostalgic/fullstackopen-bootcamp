@@ -54,6 +54,22 @@ describe('when there are same notes saved initally', () => {
             const contents = blogsAtEnd.map(n => n.title)
             assert(contents.includes('Test Blog'))
         })
+
+        test('If likes is not provided, it defaults to 0', async()=>{
+            const newBlog = {
+                title: 'Test Blog 2',
+                author: 'Test Author 2',
+                url: 'https://test2.com',
+            }
+            
+            const response =await api
+            .post('/api/blogs')
+            .send(newBlog)
+            .expect(201)
+            .expect('Content-Type', /application\/json/)
+
+            assert.strictEqual(response.body.likes, 0)
+        })
     })
 })
 
