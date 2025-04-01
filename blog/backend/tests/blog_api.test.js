@@ -104,7 +104,79 @@ describe('when there are same notes saved initally', () => {
         })
     })
 
+    describe('deletion of a blog', () => {
+        test('succeeds with status code 204 if id is valid', async()=>{
+            const blogsAtStart = await helper.blogsInDb()
+            const blogToDelete = blogsAtStart[0]
 
+            await api
+            .delete(`/api/blogs/${blogToDelete.id}`)
+            .expect(204)
+
+            const blogsAtEnd = await helper.blogsInDb()
+            assert.strictEqual(blogsAtEnd.length, blogsAtStart.length - 1)
+        })
+
+        test('fails with status code 404 if id is invalid', async()=>{
+            const blogsAtStart = await helper.blogsInDb()
+            const invalidId = '5a3d5ce6777b2b2b2b2b2b2b'
+
+            await api
+            .delete(`/api/blogs/${invalidId}`)
+            .expect(404)
+
+            const blogsAtEnd = await helper.blogsInDb()
+            assert.strictEqual(blogsAtEnd.length, blogsAtStart.length)
+        })
+    })
+
+    describe('updating a blog', () => {
+        test('succeeds with status code 200 if id is valid', async()=>{
+            const blogsAtStart = await helper.blogsInDb()
+            const blogToUpdate = blogsAtStart[0]
+
+            const updatedBlog = {
+                title: 'Updated Blog',
+                author: 'Updated Author',
+                url: 'https://updated.com',
+                likes: 30
+            }
+
+            await api
+            .put(`/api/blogs/${blogToUpdate.id}`)
+            .send(updatedBlog)
+            .expect(200)
+
+            const blogsAtEnd = await helper.blogsInDb()
+            assert.strictEqual(blogsAtEnd.length, blogsAtStart.length)
+            
+            const newBlog = blogsAtEnd.find(blog => blog.id === blogToUpdate.id)
+            assert.strictEqual(newBlog.title, 'Updated Blog')
+            assert.strictEqual(newBlog.author, 'Updated Author')
+            assert.strictEqual(newBlog.url, 'https://updated.com')
+            assert.strictEqual(newBlog.likes, 30)
+        })
+
+        test('fails with status code 404 if id is invalid', async()=>{
+            const blogsAtStart = await helper.blogsInDb()
+            const invalidId = '5a3d5ce6777b2b2b2b2b2b2b'
+
+            const updatedBlog = {
+                title: 'Updated Blog',
+                author: 'Updated Author',
+                url: 'https://updated.com',
+                likes: 30
+            }
+
+            await api
+            .put(`/api/blogs/${invalidId}`)
+            .send(updatedBlog)
+            .expect(404)
+
+            const blogsAtEnd = await helper.blogsInDb()
+            assert.strictEqual(blogsAtEnd.length, blogsAtStart.length)
+        })
+    })
 })
 
 after(async () => {
