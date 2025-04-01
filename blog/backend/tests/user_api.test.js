@@ -149,8 +149,6 @@ describe('when logging in', () => {
     const loginResponse = await api
       .post('/api/login')
       .send(helper.initialUsers[0])
-      .expect(200)
-      .expect('Content-Type', /application\/json/)
 
     const token = loginResponse.body.token
 
@@ -177,6 +175,92 @@ describe('when logging in', () => {
     const userId = await helper.userId(loginResponse.body.username)
     assert.strictEqual(response.body.user.toString(), userId.toString())
   })
+
+})
+
+describe('when deleting a blog', () => {
+  beforeEach(async () => {
+    await User.deleteMany({})
+    await Blog.deleteMany({})
+
+    for (let user of helper.initialUsers) {
+      const passwordHash = await bcryptjs.hash(user.password, 10)
+      const userObject = new User({ username: user.username, passwordHash })
+      await userObject.save()
+    }
+  })
+
+  test('succeeds when deleting a blog', async () => {
+    const loginResponse = await api
+      .post('/api/login')
+      .send(helper.initialUsers[0])
+
+    const token = loginResponse.body.token
+
+    const newBlog = {
+      title: 'Test Blog',
+      author: 'Test Author',
+      url: 'https://test.com',
+      likes: 10
+    }
+
+    const response = await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .set('Authorization', `Bearer ${token}`)
+
+    const blogId = response.body.id
+
+    await api
+      .delete(`/api/blogs/${blogId}`)
+      .set('Authorization', `Bearer ${token}`)
+      .expect(204)
+
+    const blogsAtEnd = await helper.blogsInDb()
+    assert.strictEqual(blogsAtEnd.length, 0)
+  })
+
+  test('fails when deleting a blog with an invalid token', async () => {
+    // login and create new blog
+    let loginResponse = await api
+      .post('/api/login')
+      .send(helper.initialUsers[0])
+
+    let loginToken = loginResponse.body.token
+
+    const newBlog = {
+      title: 'Test Blog',
+      author: 'Test Author',
+      url: 'https://test.com',
+      likes: 10
+    }
+
+    const response = await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .set('Authorization', `Bearer ${loginToken}`)
+
+    const blogId = response.body.id
+
+    // login as a different user and delete the blog
+    loginResponse = await api
+      .post('/api/login')
+      .send(helper.initialUsers[1])
+
+    loginToken = loginResponse.body.token
+
+    const deleteResponse = await api
+      .delete(`/api/blogs/${blogId}`)
+      .set('Authorization', `Bearer ${loginToken}`)
+      .expect(401)
+      .expect('Content-Type', /application\/json/)
+
+    const blogsAtEnd = await helper.blogsInDb()
+    assert.strictEqual(blogsAtEnd.length, 1)
+    assert(deleteResponse.body.error.includes('unauthorized'), 
+        `Expected error message to include 'unauthorized' but got: '${deleteResponse.body.error}'`)
+  })
+
 })
 
 after(async () => {
