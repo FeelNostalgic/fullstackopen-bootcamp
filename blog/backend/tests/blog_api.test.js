@@ -35,8 +35,25 @@ describe('when there are same notes saved initally', () => {
         })
     })
 
-    describe('viewing a specific blog', () => {
-        //
+    describe('addition of a new blog', () => {
+        test('succeeds with valid data', async () => {
+            const newBlog = {
+                title: 'Test Blog',
+                author: 'Test Author',
+                url: 'https://test.com',
+                likes: 10
+            }
+
+            await api.post('/api/blogs').send(newBlog)
+            .expect(201)
+            .expect('Content-Type', /application\/json/)
+
+            const blogsAtEnd = await helper.blogsInDb()
+            assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length + 1)
+            
+            const contents = blogsAtEnd.map(n => n.title)
+            assert(contents.includes('Test Blog'))
+        })
     })
 })
 
