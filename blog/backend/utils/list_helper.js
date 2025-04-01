@@ -26,10 +26,21 @@ const dummy = (blogs) => {
     const authors = _.map(authorCounts, (count, author) => ({ author, count }))    
     return _.maxBy(authors, 'count')
   }
+
+  const mostLikes = (blogs) => {
+    if (blogs.length === 0) {
+      return null
+    }
+   
+    const authorLikes = _.groupBy(blogs, 'author') // This is a dictionary with the author as the key and the blogs as the value
+    const authors = _.map(authorLikes, (likes, author) => ({ author, likes: _.sumBy(likes, 'likes') }))
+    return _.maxBy(authors, 'likes')
+  }
   
   module.exports = {
     dummy,
     totalLikes,
     favoriteBlog,
-    mostBlogs
+    mostBlogs,
+    mostLikes
   }
