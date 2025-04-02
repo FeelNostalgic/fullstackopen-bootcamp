@@ -1,6 +1,25 @@
 import { Header2 } from "./Headers"
+import { useState } from 'react'
 
-const LoginForm = ({ username, password, handleUsernameChange, handlePasswordChange, handleSubmit }) => {
+const LoginForm = ({ handleLogin }) => {
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
+
+  const handleUsernameChange = (event) => {
+    setUsername(event.target.value)
+  }
+
+  const handlePasswordChange = (event) => {
+    setPassword(event.target.value)
+  }
+
+  const handleSubmit = (event) => {
+    event.preventDefault()
+    handleLogin({ username, password })
+    setUsername('')
+    setPassword('') 
+  }
+
   return (
     <div>
       <Header2 text='Login' />

@@ -13,13 +13,9 @@ import loginService from './services/login'
 import './index.css'
 
 const App = () => {
-  const [loginVisible, setLoginVisible] = useState(false)
   const [notes, setNotes] = useState([])
-  const [newNotes, setNewNotes] = useState('')
   const [showAll, setShowAll] = useState(true)
   const [notification, setNotification] = useState({ message: null, type: null })
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
   const [user, setUser] = useState(null) //user token
 
   useEffect(() => {
@@ -45,35 +41,17 @@ const App = () => {
     }
   }, [user])
 
-  const handleNoteChange = (event) => {
-    setNewNotes(event.target.value)
+  const addNote = async (noteObject) => {
+    const newNote = await noteService.create(noteObject)
+    setNotes(notes.concat(newNote))
   }
 
-  const addNote = (event) => {
-    event.preventDefault()
-    const noteObject = {
-      content: newNotes,
-      important: Math.random() > 0.5
-    }
-
-    noteService
-      .create(noteObject)
-      .then(returnedNote => {
-        // console.log(response)
-        setNotes(notes.concat(returnedNote))
-        setNewNotes('')
-      })
-  }
-
-  const handleLogin = async (event) => {
-    event.preventDefault()
+  const handleLogin = async (userObject) => {
     try {
-      const user = await loginService.login({ username, password })
+      const user = await loginService.login(userObject)
       window.localStorage.setItem('loggedNoteAppUser', JSON.stringify(user))
       noteService.setToken(user.token)
       setUser(user)
-      setUsername('')
-      setPassword('')
       setNotification({ message: 'Successfully logged in', type: 'success' })
     } catch (exception) {
       setNotification({ message: 'wrong credentials', type: 'error' })
@@ -120,13 +98,7 @@ const App = () => {
   const loginForm = () => {
     return (
       <Togglable buttonLabel='login'>
-        <LoginForm
-          username={username}
-          password={password}
-          handleUsernameChange={({ target }) => setUsername(target.value)}
-          handlePasswordChange={({ target }) => setPassword(target.value)}
-          handleSubmit={handleLogin}
-        />
+        <LoginForm handleLogin={handleLogin} />
       </Togglable>
     )
   }
@@ -134,7 +106,7 @@ const App = () => {
   const noteForm = () => {
     return (
       <Togglable buttonLabel='new note'>
-        <NoteForm onSubmit={addNote} handleChange={handleNoteChange} value={newNotes} />
+        <NoteForm createNote={addNote} />
       </Togglable>
     )
   }
