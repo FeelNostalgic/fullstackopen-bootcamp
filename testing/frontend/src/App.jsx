@@ -9,7 +9,7 @@ import loginService from './services/login'
 import './index.css'
 
 const App = () => {
-  const [notes, setNotes] = useState(null)
+  const [notes, setNotes] = useState([])
   const [newNotes, setNewNotes] = useState('')
   const [showAll, setShowAll] = useState(true)
   const [errorMessage, setErrorMessage] = useState(null)
@@ -18,12 +18,27 @@ const App = () => {
   const [user, setUser] = useState(null) //user token
 
   useEffect(() => {
-    noteService
-      .getAll() // getAll is a function that returns a promise
-      .then(initialNotes => {
-        setNotes(initialNotes)
-      })
+    const loggedUserJSON = window.localStorage.getItem('loggedNoteAppUser')
+    if (loggedUserJSON) {
+      const user = JSON.parse(loggedUserJSON)
+      noteService.setToken(user.token)
+      setUser(user)
+      fetchNotes()
+    }
   }, [])
+
+  const fetchNotes = async () => {
+    const initialNotes = await noteService.getAll()
+    setNotes(initialNotes)
+  }
+
+  useEffect(() => {
+    if(user) {
+      fetchNotes()
+    }else{
+      setNotes([])
+    }
+  }, [user])
 
   const handleNoteChange = (event) => {
     setNewNotes(event.target.value)
@@ -49,6 +64,7 @@ const App = () => {
     event.preventDefault()
     try {
       const user = await loginService.login({ username, password })
+      window.localStorage.setItem('loggedNoteAppUser', JSON.stringify(user))
       noteService.setToken(user.token)
       setUser(user)
       setUsername('')
@@ -70,7 +86,7 @@ const App = () => {
         setNotes(notes.map(n => n.id !== id ? n : returnedNote)) // replace the old note with the updated note
       })
       .catch(error => {
-        setErrorMessage(`Note '${note.content}' was already removed from server`)
+        setErrorMessage(`Note '${note.content}' was already removed from server`) // TODO: only show notes that user has created
         setTimeout(() => {
           setErrorMessage(null)
         }, 5000)
@@ -94,10 +110,6 @@ const App = () => {
         <em>Note app, 2025</em>
       </div>
     )
-  }
-
-  if (!notes) {
-    return null
   }
 
   const loginForm = () => {

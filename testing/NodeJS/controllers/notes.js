@@ -1,18 +1,14 @@
 const notesRouter = require('express').Router()
-const jwt = require('jsonwebtoken')
 const Note = require('../models/note')
 const User = require('../models/user')
 
-const getTokenFrom = request => {
-  const authorization = request.get('authorization')
-  if (authorization && authorization.startsWith('Bearer ')) {
-    return authorization.replace('Bearer ', '')
-  }
-  return null
-}
-
 // GET: Get all notes
 notesRouter.get('/', async (request, response) => {
+  const user = await User.findById(request.user)
+  if (!user) {
+    return response.status(401).json({ error: 'unauthorized' })
+  }
+
   const notes = await Note.find({}).populate('user', { username: 1, name: 1 })
   response.json(notes)
 })
@@ -20,12 +16,11 @@ notesRouter.get('/', async (request, response) => {
 // POST: Create a new note
 notesRouter.post('/', async (request, response,) => {
   const body = request.body
-  const decodedToken = jwt.verify(getTokenFrom(request), process.env.SECRET)
-  if (!decodedToken.id) {
-    return response.status(401).json({ error: 'token invalid' })
+  const user = await User.findById(request.user)
+
+  if (!user) {
+    return response.status(401).json({ error: 'unauthorized' })
   }
-  
-  const user = await User.findById(decodedToken.id)
 
   const note = new Note({
     content: body.content,
@@ -41,15 +36,32 @@ notesRouter.post('/', async (request, response,) => {
 
 // GET: Get a note by id
 notesRouter.get('/:id', async (request, response,) => {
+  const user = await User.findById(request.user)
   const note = await Note.findById(request.params.id)
-  if (note) {
-    response.json(note)
-  } else {
-    response.status(404).end()
+
+  if (!note) {
+    return response.status(404).end()
   }
+
+  if (note.user.toString() !== user.id.toString()) {
+    return response.status(401).json({ error: 'unauthorized' })
+  }
+
+  response.json(note)
 })
 
 notesRouter.delete('/:id', async (request, response) => {
+  const user = await User.findById(request.user)
+
+  const note = await Note.findById(request.params.id)
+  if (!note) {
+    return response.status(404).end()
+  }
+
+  if (note.user.toString() !== user.id.toString()) {
+    return response.status(401).json({ error: 'unauthorized' })
+  }
+
   await Note.findByIdAndDelete(request.params.id)
   response.status(204).end()
 })
@@ -58,9 +70,15 @@ notesRouter.delete('/:id', async (request, response) => {
 notesRouter.put('/:id', async (request, response) => {
   const { content, important } = request.body
 
+  const user = await User.findById(request.user)
+
   const note = await Note.findById(request.params.id)
   if (!note) {
     return response.status(404).end()
+  }
+
+  if (note.user.toString() !== user.id.toString()) {
+    return response.status(401).json({ error: 'unauthorized' })
   }
 
   note.content = content
@@ -69,7 +87,6 @@ notesRouter.put('/:id', async (request, response) => {
   const updatedNote = await note.save()
 
   return response.status(200).json(updatedNote)
-
 })
 
 module.exports = notesRouter
