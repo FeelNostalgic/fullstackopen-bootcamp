@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Note from './components/Note'
 import Button from './components/Button'
 import { Header } from './components/Headers'
@@ -42,6 +42,7 @@ const App = () => {
   }, [user])
 
   const addNote = async (noteObject) => {
+    noteFormRef.current.toggleVisibility()
     const newNote = await noteService.create(noteObject)
     setNotes(notes.concat(newNote))
   }
@@ -103,9 +104,11 @@ const App = () => {
     )
   }
 
+  const noteFormRef = useRef()
+
   const noteForm = () => {
     return (
-      <Togglable buttonLabel='new note'>
+      <Togglable buttonLabel='new note' ref={noteFormRef}>
         <NoteForm createNote={addNote} />
       </Togglable>
     )
