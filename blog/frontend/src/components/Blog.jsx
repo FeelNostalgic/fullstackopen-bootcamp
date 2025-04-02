@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import Button from './Button'
 
-const Blog = ({ blog }) => {
+const Blog = ({ blog, sendLike }) => {
   const blogStyle = {
     paddingTop: 10,
     paddingLeft: 2,
@@ -17,7 +17,7 @@ const Blog = ({ blog }) => {
   }
 
   const handleLike = () => {
-    console.log('like button clicked')
+    sendLike(blog)
   }
 
   return (
@@ -28,9 +28,10 @@ const Blog = ({ blog }) => {
         <div>
           <p>{blog.url}</p>
           <div>
-            likes {blog.likes} <Button onClick={() => handleLike()} text='like' />
+            likes {blog.likes} <Button onClick={handleLike} text='like' />
           </div>
           <p>{blog.author}</p>
+          <p>{blog.user.username}</p>
         </div>
       )}
     </div>

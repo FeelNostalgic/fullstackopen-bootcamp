@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
+
 import LoginForm from './components/LoginForm'
 import BlogForm from './components/BlogForm'
 import UserInfo from './components/UserInfo'
@@ -6,6 +7,7 @@ import { Header2 } from './components/Headers'
 import Blogs from './components/Blogs'
 import Notification from './components/Notification'
 import Togglable from './components/Toggleable'
+
 import blogService from './services/blogs'
 import loginService from './services/login'
 
@@ -62,6 +64,21 @@ const App = () => {
     }, 5000)
   }
 
+  const handleLike = async (blogObject) => {
+    const updatedBlog = { ...blogObject, likes: blogObject.likes + 1 }
+    console.log(updatedBlog);
+    
+    try {
+      await blogService.update(blogObject.id, updatedBlog)
+      setBlogs(blogs.map(b => b.id !== blogObject.id ? b : updatedBlog))
+    } catch (exception) {
+      setNotification({ message: 'Error updating blog', type: 'error' })
+      setTimeout(() => {
+        setNotification({ message: null, type: null })
+      }, 5000)  
+    }
+  }
+
   const loginForm = () =>{
     return (
       <Togglable buttonLabel='login'>
@@ -90,7 +107,7 @@ const App = () => {
         <div>
           <UserInfo user={user} handleLogout={handleLogout} />
           {blogForm()}
-          <Blogs blogs={blogs} />
+          <Blogs blogs={blogs} sendLike={handleLike} />
         </div>
       }
     </div>

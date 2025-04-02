@@ -53,21 +53,22 @@ blogRouter.delete('/:id', async (request, response) => {
     response.status(204).end()
 })
 
-// PUT: update a blog   
+// PUT: update a blog to like   
 blogRouter.put('/:id', async (request, response) => {
-    const { title, author, url, likes } = request.body
+    const { user, title, author, url, likes } = request.body
 
-    const user = await User.findById(request.user)
+    const userObject = await User.findById(user)
 
     const blog = await Blog.findById(request.params.id)
     if (!blog) {        
         return response.status(404).end()
     }
 
-    if (blog.user.toString() !== user.id.toString()) {
-        return response.status(401).json({ error: 'unauthorized' })
-    }
+    // if (blog.user.toString() !== user.id.toString()) {
+    //     return response.status(401).json({ error: 'unauthorized' })
+    // }
     
+    blog.user = userObject;    
     blog.title = title
     blog.author = author
     blog.url = url
