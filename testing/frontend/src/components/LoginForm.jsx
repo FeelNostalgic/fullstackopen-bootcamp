@@ -28,6 +28,7 @@ const LoginForm = ({ handleLogin }) => {
         <div>
           username
           <input
+            data-testid='username'
             type='text'
             value={username}
             onChange={handleUsernameChange}
@@ -36,12 +37,13 @@ const LoginForm = ({ handleLogin }) => {
         <div>
           password
           <input
+            data-testid='password'
             type='password'
             value={password}
             onChange={handlePasswordChange}
           />
         </div>
-        <button type='submit'>login</button>
+        <button data-testid='login-button' type='submit'>login</button>
       </form>
     </div>
   )
