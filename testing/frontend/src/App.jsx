@@ -3,6 +3,7 @@ import Note from './components/Note'
 import Button from './components/Button'
 import { Header } from './components/Headers'
 import Notification from './components/Notification'
+import LoginForm from './components/LoginForm'
 import noteService from './services/notes'
 import loginService from './services/login'
 
@@ -114,25 +115,13 @@ const App = () => {
 
   const loginForm = () => {
     return (
-    <form onSubmit={handleLogin}>
-      <div>
-        username
-        <input
-          type='text'
-          value={username}
-          onChange={({ target }) => setUsername(target.value)}
-        />
-      </div>
-      <div>
-        password
-        <input
-          type='password'
-          value={password}
-          onChange={({ target }) => setPassword(target.value)}
-        />
-      </div>
-        <button type='submit'>login</button>
-      </form>
+      <LoginForm
+        username={username}
+        password={password}
+        handleUsernameChange={({ target }) => setUsername(target.value)}
+        handlePasswordChange={({ target }) => setPassword(target.value)}
+        handleSubmit={handleLogin}
+      />
     )
   }
 
