@@ -66,7 +66,6 @@ const App = () => {
 
   const handleLike = async (blogObject) => {
     const updatedBlog = { ...blogObject, likes: blogObject.likes + 1 }
-    console.log(updatedBlog);
     
     try {
       await blogService.update(blogObject.id, updatedBlog)
