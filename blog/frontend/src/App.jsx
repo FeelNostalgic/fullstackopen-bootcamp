@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react'
 import LoginForm from './components/LoginForm'
-import { Header, Header2 } from './components/Headers'
-import Button from './components/Button'
+import BlogForm from './components/BlogForm'
+import UserInfo from './components/UserInfo'
+import { Header2 } from './components/Headers'
 import Blogs from './components/Blogs'
 import Notification from './components/Notification'
 import blogService from './services/blogs'
@@ -13,8 +14,11 @@ const App = () => {
   const [password, setPassword] = useState('')
   const [errorMessage, setErrorMessage] = useState(null)
   const [user, setUser] = useState(null)
+  const [title, setTitle] = useState('')
+  const [author, setAuthor] = useState('')
+  const [url, setUrl] = useState('')
 
-  const fetchBlogs = async () => {
+  const fetchInitialBlogs = async () => {
     const initialBlogs = await blogService.getAll()
     setBlogs(initialBlogs)
   }
@@ -25,7 +29,7 @@ const App = () => {
       const user = JSON.parse(loggedUser)
       setUser(user)
       blogService.setToken(user.token)
-      fetchBlogs()
+      fetchInitialBlogs()
     }
   }, [])
 
@@ -38,7 +42,7 @@ const App = () => {
       setUser(user)
       setUsername('')
       setPassword('')
-      fetchBlogs()
+      fetchInitialBlogs()
     } catch (exception) {
       setErrorMessage('wrong credentials')
       setTimeout(() => {
@@ -52,6 +56,16 @@ const App = () => {
     setUser(null)
   }
 
+  const handleSubmitBlog = async (event) => {
+    event.preventDefault()
+    const blogObject = { title, author, url }
+    const newBlog = await blogService.create(blogObject)
+    setTitle('')
+    setAuthor('')
+    setUrl('')
+    setBlogs(blogs.concat(newBlog))
+  }
+
   return (
     <div>
       <Notification message={errorMessage} />
@@ -60,9 +74,8 @@ const App = () => {
         :
         <div>
           <Header2 text='blogs' />
-          <div>
-            {user.name} logged in <Button onClick={handleLogout} text='logout' />
-          </div>
+          <UserInfo user={user} handleLogout={handleLogout} />
+          <BlogForm title={title} author={author} url={url} setTitle={setTitle} setAuthor={setAuthor} setUrl={setUrl} handleSubmit={handleSubmitBlog} />
           <Blogs blogs={blogs} />
         </div>
       }

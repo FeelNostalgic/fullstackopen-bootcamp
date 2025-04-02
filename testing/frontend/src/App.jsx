@@ -4,6 +4,8 @@ import Button from './components/Button'
 import { Header } from './components/Headers'
 import Notification from './components/Notification'
 import LoginForm from './components/LoginForm'
+import UserInfo from './components/UserInfo'
+import BlogForm from './components/BlogForm'
 import noteService from './services/notes'
 import loginService from './services/login'
 
@@ -134,6 +136,12 @@ const App = () => {
     )
   }
 
+  const handleLogout = () => {
+    setUser(null)
+    noteService.setToken(null)
+    window.localStorage.removeItem('loggedNoteAppUser')
+  }
+
   return (
     <div>
       <Header text='Notes' />
@@ -143,7 +151,7 @@ const App = () => {
         user === null
           ? loginForm()
           : <div>
-            <p>{user.name} logged in</p>
+            <UserInfo user={user} handleLogout={handleLogout} />
             {noteForm()}
           </div>
       }
