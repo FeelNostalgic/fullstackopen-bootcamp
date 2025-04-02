@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import Button from './Button'
 
-const Blog = ({ blog, sendLike }) => {
+const Blog = ({ blog, sendLike, sendDelete, user }) => {
   const blogStyle = {
     paddingTop: 10,
     paddingLeft: 2,
@@ -18,6 +18,10 @@ const Blog = ({ blog, sendLike }) => {
 
   const handleLike = () => {
     sendLike(blog)
+  } 
+
+  const handleDelete = () => {
+    sendDelete(blog)
   }
 
   return (
@@ -26,12 +30,14 @@ const Blog = ({ blog, sendLike }) => {
       <Button onClick={() => toggleVisibility()} text={visible ? 'hide' : 'view'} />
       {visible && (
         <div>
-          <p>{blog.url}</p>
+          <p>{blog.url} {blog.author}</p>
           <div>
             likes {blog.likes} <Button onClick={handleLike} text='like' />
           </div>
-          <p>{blog.author}</p>
           <p>{blog.user.username}</p>
+          {blog.user.username === user.username && (
+            <Button onClick={handleDelete} text='remove' style={{ backgroundColor: 'red', color: 'white' }}/>
+          )}
         </div>
       )}
     </div>

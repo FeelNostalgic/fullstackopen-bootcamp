@@ -1,3 +1,3 @@
-const Button = ({onClick, text}) => <button onClick={onClick}>{text}</button>
+const Button = ({onClick, text, style}) => <button onClick={onClick} style={style}>{text}</button>
 
 export default Button

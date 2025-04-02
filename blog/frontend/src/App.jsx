@@ -100,6 +100,21 @@ const App = () => {
     )
   }
 
+  const handleDelete = async (blogObject) => {
+    if (window.confirm('Are you sure you want to delete this blog?')) {
+      try {
+        await blogService.remove(blogObject.id)
+        setBlogs(blogs.filter(b => b.id !== blogObject.id))
+        setNotification({ message: 'Blog deleted successfully', type: 'success' })
+      } catch (exception) {
+        setNotification({ message: 'Error deleting blog', type: 'error' })
+        setTimeout(() => {
+          setNotification({ message: null, type: null })
+        }, 5000)
+      }
+    }
+  }
+
   return (
     <div>
       <Header2 text={user === null ? 'Login to application' : 'Blogs'} />
@@ -110,7 +125,7 @@ const App = () => {
         <div>
           <UserInfo user={user} handleLogout={handleLogout} />
           {blogForm()}
-          <Blogs blogs={blogs} sendLike={handleLike} />
+          <Blogs blogs={blogs} sendLike={handleLike} sendDelete={handleDelete} user={user} />
         </div>
       }
     </div>
