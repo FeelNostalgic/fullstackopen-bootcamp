@@ -4,11 +4,6 @@ const User = require('../models/user')
 
 // GET: Get all notes
 notesRouter.get('/', async (request, response) => {
-  const user = await User.findById(request.user)
-  if (!user) {
-    return response.status(401).json({ error: 'unauthorized' })
-  }
-
   const notes = await Note.find({}).populate('user', { username: 1, name: 1 })
   response.json(notes)
 })

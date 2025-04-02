@@ -5,13 +5,15 @@ import { Header } from './components/Headers'
 import Notification from './components/Notification'
 import LoginForm from './components/LoginForm'
 import UserInfo from './components/UserInfo'
-import BlogForm from './components/BlogForm'
+import NoteForm from './components/NoteForm'
+import Togglable from './components/Toggleable'
 import noteService from './services/notes'
 import loginService from './services/login'
 
 import './index.css'
 
 const App = () => {
+  const [loginVisible, setLoginVisible] = useState(false)
   const [notes, setNotes] = useState([])
   const [newNotes, setNewNotes] = useState('')
   const [showAll, setShowAll] = useState(true)
@@ -36,9 +38,9 @@ const App = () => {
   }
 
   useEffect(() => {
-    if(user) {
+    if (user) {
       fetchNotes()
-    }else{
+    } else {
       setNotes([])
     }
   }, [user])
@@ -81,24 +83,20 @@ const App = () => {
     }, 5000)
   }
 
-  const toggleImportanceOf = (id) => {
+  const toggleImportanceOf = async (id) => {
     const note = notes.find(n => n.id === id)
     const changeNote = { ...note, important: !note.important } // ...note => All note with important changed
-    noteService
-      .update(id, changeNote)
-      .then(returnedNote => {
-        setNotes(notes.map(n => n.id !== id ? n : returnedNote)) // replace the old note with the updated note
-      })
-      .catch(error => {
-        setNotification({ 
-          message: `Note '${note.content}' was already removed from server`, 
-          type: 'error' 
-        })
-        setTimeout(() => {
-          setNotification({ message: null, type: null })
-        }, 5000)
-        setNotes(notes.filter(n => n.id !== id))
-      })
+
+    try {
+      const updatedNote = await noteService.update(id, changeNote)
+      setNotes(notes.map(n => n.id !== id ? n : updatedNote))
+    } catch (exception) {
+      setNotification({ message: 'Note was already removed from server', type: 'error' })
+      setTimeout(() => {
+        setNotification({ message: null, type: null })
+      }, 5000)
+      setNotes(notes.filter(n => n.id !== id))
+    }
   }
 
   const notesToShow = showAll
@@ -121,22 +119,23 @@ const App = () => {
 
   const loginForm = () => {
     return (
-      <LoginForm
-        username={username}
-        password={password}
-        handleUsernameChange={({ target }) => setUsername(target.value)}
-        handlePasswordChange={({ target }) => setPassword(target.value)}
-        handleSubmit={handleLogin}
-      />
+      <Togglable buttonLabel='login'>
+        <LoginForm
+          username={username}
+          password={password}
+          handleUsernameChange={({ target }) => setUsername(target.value)}
+          handlePasswordChange={({ target }) => setPassword(target.value)}
+          handleSubmit={handleLogin}
+        />
+      </Togglable>
     )
   }
 
-  const noteForm = () => {  
+  const noteForm = () => {
     return (
-    <form onSubmit={addNote}>
-      <input value={newNotes} placeholder='write note content here' onChange={handleNoteChange} />
-        <button type='submit'>save</button>
-      </form>
+      <Togglable buttonLabel='new note'>
+        <NoteForm onSubmit={addNote} handleChange={handleNoteChange} value={newNotes} />
+      </Togglable>
     )
   }
 
@@ -160,19 +159,19 @@ const App = () => {
           </div>
       }
 
-      <div>
-        <Button onClick={() => setShowAll(!showAll)} text={showAll ? 'Show important' : 'Show all'} />
-        <ul>
-          {notesToShow.map(note =>
-            <Note
-              key={note.id}
-              note={note}
-              toggleImportance={() => toggleImportanceOf(note.id)}
-            />
-          )}
-        </ul>
-      </div>
-
+      {user !== null &&
+        <div>
+          <Button onClick={() => setShowAll(!showAll)} text={showAll ? 'Show important' : 'Show all'} />
+          <ul>
+            {notesToShow.map(note =>
+              <Note
+                key={note.id}
+                note={note}
+                toggleImportance={() => toggleImportanceOf(note.id)}
+              />
+            )}
+          </ul>
+        </div>}
       <Footer />
     </div>
   )

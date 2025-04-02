@@ -1,16 +1,16 @@
 import { Header2 } from "./Headers"
 
-const LoginForm = ({ username, password, handleUsernameChange, handlePasswordChange, handleSubmit }) => {
-  return (
+const LoginForm = ({ username, password, setUsername, setPassword, handleLogin }) => {
+  return ( 
     <div>
-      <Header2 text='Login' />
-      <form onSubmit={handleSubmit}>
+      {/* <Header2 text='login in to application' /> */}
+      <form onSubmit={handleLogin}>
         <div>
           username
           <input
             type='text'
             value={username}
-            onChange={handleUsernameChange}
+            onChange={({ target }) => setUsername(target.value)}
           />
         </div>
         <div>
@@ -18,7 +18,7 @@ const LoginForm = ({ username, password, handleUsernameChange, handlePasswordCha
           <input
             type='password'
             value={password}
-            onChange={handlePasswordChange}
+            onChange={({ target }) => setPassword(target.value)}
           />
         </div>
         <button type='submit'>login</button>
@@ -27,4 +27,4 @@ const LoginForm = ({ username, password, handleUsernameChange, handlePasswordCha
   )
 }
 
-export default LoginForm 
+export default LoginForm

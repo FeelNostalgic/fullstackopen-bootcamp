@@ -3,17 +3,8 @@ const Notification = ({ message, type }) => {
     return null
   }
 
-  const notificationStyle = {
-    background: type === 'success' ? 'lightgreen' : 'lightred',
-    fontSize: 20,
-    borderStyle: 'solid',
-    borderRadius: 5,
-    padding: 10,
-    marginBottom: 10
-  }
-
   return (
-    <div style={notificationStyle}>
+    <div className={type}  >
       {message}
     </div>
   )
