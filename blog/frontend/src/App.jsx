@@ -8,11 +8,13 @@ import Notification from './components/Notification'
 import blogService from './services/blogs'
 import loginService from './services/login'
 
+import './index.css'
+
 const App = () => {
   const [blogs, setBlogs] = useState([])
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
-  const [errorMessage, setErrorMessage] = useState(null)
+  const [notification, setNotification] = useState({ message: null, type: null })
   const [user, setUser] = useState(null)
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
@@ -44,9 +46,9 @@ const App = () => {
       setPassword('')
       fetchInitialBlogs()
     } catch (exception) {
-      setErrorMessage('wrong credentials')
+      setNotification({ message: 'wrong credentials', type: 'error' })
       setTimeout(() => {
-        setErrorMessage(null)
+        setNotification({ message: null, type: null })
       }, 5000)
     }
   }
@@ -63,17 +65,21 @@ const App = () => {
     setTitle('')
     setAuthor('')
     setUrl('')
+    setNotification({ message: `a new blog ${newBlog.title} by ${newBlog.author} added`, type: 'success' })
     setBlogs(blogs.concat(newBlog))
+    setTimeout(() => {
+      setNotification({ message: null, type: null })
+    }, 5000)
   }
 
   return (
-    <div>
-      <Notification message={errorMessage} />
+    <div> 
+      <Header2 text= {user === null ? 'Login to application' : 'Blogs'} />
+      <Notification message={notification.message} type={notification.type} />
       {user === null ?
         <LoginForm username={username} password={password} setUsername={setUsername} setPassword={setPassword} handleLogin={handleLogin} />
         :
         <div>
-          <Header2 text='blogs' />
           <UserInfo user={user} handleLogout={handleLogout} />
           <BlogForm title={title} author={author} url={url} setTitle={setTitle} setAuthor={setAuthor} setUrl={setUrl} handleSubmit={handleSubmitBlog} />
           <Blogs blogs={blogs} />

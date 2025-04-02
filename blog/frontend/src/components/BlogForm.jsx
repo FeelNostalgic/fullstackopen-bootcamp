@@ -3,7 +3,7 @@ import { Header2 } from "./Headers"
 const BlogForm = ({ handleSubmit, title, author, url, setTitle, setAuthor, setUrl }) => {
   return (
     <div>
-      <Header2 text='create new blog' />
+      <Header2 text='Create new blog' />
       <form onSubmit={handleSubmit}>
         <div>
           title:

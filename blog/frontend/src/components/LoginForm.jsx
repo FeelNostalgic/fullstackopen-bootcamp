@@ -3,7 +3,7 @@ import { Header2 } from "./Headers"
 const LoginForm = ({ username, password, setUsername, setPassword, handleLogin }) => {
   return ( 
     <div>
-      <Header2 text='login in to application' />
+      {/* <Header2 text='login in to application' /> */}
       <form onSubmit={handleLogin}>
         <div>
           username

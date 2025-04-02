@@ -15,7 +15,7 @@ const App = () => {
   const [notes, setNotes] = useState([])
   const [newNotes, setNewNotes] = useState('')
   const [showAll, setShowAll] = useState(true)
-  const [errorMessage, setErrorMessage] = useState(null)
+  const [notification, setNotification] = useState({ message: null, type: null })
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null) //user token
@@ -72,12 +72,13 @@ const App = () => {
       setUser(user)
       setUsername('')
       setPassword('')
+      setNotification({ message: 'Successfully logged in', type: 'success' })
     } catch (exception) {
-      setErrorMessage('wrong credentials')
-      setTimeout(() => {
-        setErrorMessage(null)
-      }, 5000)
+      setNotification({ message: 'wrong credentials', type: 'error' })
     }
+    setTimeout(() => {
+      setNotification({ message: null, type: null })
+    }, 5000)
   }
 
   const toggleImportanceOf = (id) => {
@@ -89,9 +90,12 @@ const App = () => {
         setNotes(notes.map(n => n.id !== id ? n : returnedNote)) // replace the old note with the updated note
       })
       .catch(error => {
-        setErrorMessage(`Note '${note.content}' was already removed from server`) // TODO: only show notes that user has created
+        setNotification({ 
+          message: `Note '${note.content}' was already removed from server`, 
+          type: 'error' 
+        })
         setTimeout(() => {
-          setErrorMessage(null)
+          setNotification({ message: null, type: null })
         }, 5000)
         setNotes(notes.filter(n => n.id !== id))
       })
@@ -145,7 +149,7 @@ const App = () => {
   return (
     <div>
       <Header text='Notes' />
-      <Notification message={errorMessage} />
+      <Notification message={notification.message} type={notification.type} />
 
       {
         user === null
