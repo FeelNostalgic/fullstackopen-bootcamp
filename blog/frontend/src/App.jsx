@@ -18,9 +18,13 @@ const App = () => {
   const [notification, setNotification] = useState({ message: null, type: null })
   const [user, setUser] = useState(null)
 
+  const sortByLikes = (blogs) => {
+    return blogs.sort((a, b) => b.likes - a.likes)
+  }
+
   const fetchInitialBlogs = async () => {
     const initialBlogs = await blogService.getAll()
-    setBlogs(initialBlogs)
+    setBlogs(sortByLikes(initialBlogs))
   }
 
   useEffect(() => {
@@ -54,11 +58,11 @@ const App = () => {
     setUser(null)
   }
 
-  const createNewBlog = async (blogObject) => {  
+  const createNewBlog = async (blogObject) => {
     blogFormRef.current.toggleVisibility()
     const newBlog = await blogService.create(blogObject)
     setNotification({ message: `a new blog ${newBlog.title} by ${newBlog.author} added`, type: 'success' })
-    setBlogs(blogs.concat(newBlog))
+    setBlogs(sortByLikes(blogs.concat(newBlog)))
     setTimeout(() => {
       setNotification({ message: null, type: null })
     }, 5000)
@@ -66,19 +70,19 @@ const App = () => {
 
   const handleLike = async (blogObject) => {
     const updatedBlog = { ...blogObject, likes: blogObject.likes + 1 }
-    
+
     try {
       await blogService.update(blogObject.id, updatedBlog)
-      setBlogs(blogs.map(b => b.id !== blogObject.id ? b : updatedBlog))
+      setBlogs(sortByLikes(blogs.map(b => b.id !== blogObject.id ? b : updatedBlog)))
     } catch (exception) {
       setNotification({ message: 'Error updating blog', type: 'error' })
       setTimeout(() => {
         setNotification({ message: null, type: null })
-      }, 5000)  
+      }, 5000)
     }
   }
 
-  const loginForm = () =>{
+  const loginForm = () => {
     return (
       <Togglable buttonLabel='login'>
         <LoginForm handleLogin={handleLogin} />
@@ -88,17 +92,17 @@ const App = () => {
 
   const blogFormRef = useRef()
 
-  const blogForm = () =>{
+  const blogForm = () => {
     return (
       <Togglable buttonLabel='create new blog' ref={blogFormRef}>
         <BlogForm newBlog={createNewBlog} />
       </Togglable>
     )
   }
-    
+
   return (
-    <div> 
-      <Header2 text= {user === null ? 'Login to application' : 'Blogs'} />
+    <div>
+      <Header2 text={user === null ? 'Login to application' : 'Blogs'} />
       <Notification message={notification.message} type={notification.type} />
       {user === null ?
         loginForm()
