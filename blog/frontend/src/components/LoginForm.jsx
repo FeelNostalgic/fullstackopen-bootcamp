@@ -1,16 +1,33 @@
-import { Header2 } from "./Headers"
+import { useState } from 'react'
 
-const LoginForm = ({ username, password, setUsername, setPassword, handleLogin }) => {
-  return ( 
+const LoginForm = ({ handleLogin }) => {
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
+
+  const handleUsernameChange = (event) => {
+    setUsername(event.target.value)
+  }
+
+  const handlePasswordChange = (event) => {
+    setPassword(event.target.value)
+  }
+
+  const handleSubmit = (event) => {
+    event.preventDefault()
+    handleLogin({ username, password })
+    setUsername('')
+    setPassword('')
+  }
+
+  return (
     <div>
-      {/* <Header2 text='login in to application' /> */}
-      <form onSubmit={handleLogin}>
+      <form onSubmit={handleSubmit}>
         <div>
           username
           <input
             type='text'
             value={username}
-            onChange={({ target }) => setUsername(target.value)}
+            onChange={handleUsernameChange}
           />
         </div>
         <div>
@@ -18,7 +35,7 @@ const LoginForm = ({ username, password, setUsername, setPassword, handleLogin }
           <input
             type='password'
             value={password}
-            onChange={({ target }) => setPassword(target.value)}
+            onChange={handlePasswordChange}
           />
         </div>
         <button type='submit'>login</button>
@@ -27,4 +44,4 @@ const LoginForm = ({ username, password, setUsername, setPassword, handleLogin }
   )
 }
 
-export default LoginForm
+export default LoginForm 
