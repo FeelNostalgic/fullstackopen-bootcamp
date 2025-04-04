@@ -54,4 +54,36 @@ describe('Blog component', () => {
     expect(screen.queryByText('https://test.com')).toBeDefined()
     expect(screen.queryByText('likes 5')).toBeDefined()
   })
+
+  test('clicking the like button twice calls event handler twice', async () => {
+    const blog = {
+      title: 'Test Blog',
+      author: 'Test Author',
+      url: 'https://test.com',
+      likes: 5, 
+      user: {
+        username: 'testuser'
+      }
+    }
+
+    const mockUser = {
+      username: 'testuser'
+    }
+    
+    const mockHandler = vi.fn()
+
+    render(<Blog blog={blog} user={mockUser} sendLike={mockHandler} />)
+    
+    // First, we need to click the view button to show the like button
+    const viewButton = screen.getByText('view')
+    await userEvent.click(viewButton)
+    
+    // Now we can click the like button
+    const likeButton = screen.getByText('like')
+    await userEvent.click(likeButton)
+    await userEvent.click(likeButton)
+
+    expect(mockHandler.mock.calls).toHaveLength(2)
+  })
+
 })
