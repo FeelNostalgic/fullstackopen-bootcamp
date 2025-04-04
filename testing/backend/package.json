@@ -31,8 +31,14 @@
   "devDependencies": {
     "@flydotio/dockerfile": "^0.5.0",
     "@stylistic/eslint-plugin-js": "^1.6.1",
-    "eslint": "^8.56.0",
     "nodemon": "^3.0.3",
+    "standard": "^17.1.2",
     "supertest": "^6.3.4"
+  },
+  "eslintConfig": {
+    "extends": [
+      "standard",
+      "plugin:@stylistic/js/recommended"
+    ]
   }
 }

@@ -2,7 +2,7 @@ const bcrypt = require('bcrypt')
 const usersRouter = require('express').Router()
 const User = require('../models/user')
 
-// POST: register a new user 
+// POST: register a new user
 usersRouter.post('/', async (request, response) => {
   const { username, name, password } = request.body
 
