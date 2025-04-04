@@ -3,6 +3,7 @@ import { getNotes, createNote, updateNote } from './requests'
 
 const App = () => {
   const queryClient = useQueryClient()
+  
   const newNoteMutation = useMutation({
     mutationFn: createNote,
     onSuccess: (newNote) => {
