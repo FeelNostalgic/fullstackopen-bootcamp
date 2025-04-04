@@ -28,7 +28,7 @@ Cypress.Commands.add('login', ({ username, password }) => {
   cy.request('POST', `${Cypress.env('BACKEND')}/api/login`, {
     username, password
   }).then(({ body }) => {
-    localStorage.setItem('loggedNoteAppUser', JSON.stringify(body))
+    window.localStorage.setItem('loggedNoteAppUser', JSON.stringify(body))
   })
   cy.visit('')
 })
@@ -39,7 +39,7 @@ Cypress.Commands.add('createNote', ({ content, important }) => {
       method: 'POST',
       body: { content, important },
       headers: {
-        'Authorization': `Bearer ${JSON.parse(localStorage.getItem('loggedNoteappUser')).token}`
+        'Authorization': `Bearer ${JSON.parse(window.localStorage.getItem('loggedNoteAppUser')).token}`
       }
     })
   

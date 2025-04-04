@@ -29,7 +29,7 @@ describe('Note app', function () {
     cy.contains('test logged in')
   })
 
-  it.only('login fails with wrong credentials', function () {
+  it('login fails with wrong credentials', function () {
     cy.contains('login').click()
     cy.get('#username').type('test')
     cy.get('#password').type('wrong')
@@ -40,7 +40,7 @@ describe('Note app', function () {
       .and('have.css', 'color', 'rgb(255, 0, 0)')
       .and('have.css', 'border-style', 'solid')
 
-      cy.get('html').should('not.contain', 'test logged in')
+    cy.get('html').should('not.contain', 'test logged in')
   })
 
   describe('when logged in', function () {
@@ -60,11 +60,25 @@ describe('Note app', function () {
         cy.createNote({ content: 'another note created by cypress', important: true })
       })
 
-      it('can be marked as important', function () {
-        cy.contains('another note created by cypress').contains('make not important').click()
-        cy.contains('another note created by cypress').contains('make important')
+      it('can be marked as not important', function () {
+        cy.contains('another note created by cypress').parent().find('button').as('theButton')
+        cy.get('@theButton').click()
+        cy.get('@theButton').should('contain', 'make not important')
       })
     })
 
+    describe('and several notes exist', function () {
+      beforeEach(function () {
+        cy.createNote({ content: 'first note', important: true })
+        cy.createNote({ content: 'second note', important: false })
+        cy.createNote({ content: 'third note', important: true })
+      })
+
+      it('one of those can be mode important', function () {
+        cy.contains('second note').parent().find('button').as('theButton')
+        cy.get('@theButton').click()
+        cy.get('@theButton').should('contain', 'make not important')
+      })
+    })
   })
 })
