@@ -29,3 +29,4 @@ vite.config.js
 
 */cypress/cypress/videos/*
 */cypress/cypress/screenshots/*
+blog/.vscode/settings.json

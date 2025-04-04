@@ -25,16 +25,16 @@ const Blog = ({ blog, sendLike, sendDelete, user }) => {
   }
 
   return (
-    <div style={blogStyle}>
-      {blog.title}
+    <div style={blogStyle} className="blog-container">
+      <div className="blog-header">{blog.title} {blog.author}</div>
       <Button onClick={() => toggleVisibility()} text={visible ? 'hide' : 'view'} />
       {visible && (
-        <div>
-          <p>{blog.url} {blog.author}</p>
-          <div>
+        <div className="blog-details">
+          <p className="blog-url">{blog.url}</p>
+          <div className="blog-likes">
             likes {blog.likes} <Button onClick={handleLike} text='like' />
           </div>
-          <p>{blog.user.username}</p>
+          <p className="blog-user">{blog.user.username}</p>
           {blog.user.username === user.username && (
             <Button onClick={handleDelete} text='remove' style={{ backgroundColor: 'red', color: 'white' }}/>
           )}
