@@ -26,7 +26,7 @@ const NoteForm = ({ createNote }) => {
           placeholder='write note content here'
           id='note-input'
         />
-        <button type="submit">save</button>
+        <button id='save-button' type="submit">save</button>
       </form>
     </div>
   )
