@@ -6,9 +6,14 @@
       "id": 1
     },
     {
-      " content": "state of store can contain any data",
+      "content": "state of store can contain any data",
       "important": false,
       "id": 2
+    },
+    {
+      "id": "c3df",
+      "content": "notes II",
+      "important": false
     }
   ]
 }
