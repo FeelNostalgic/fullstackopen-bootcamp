@@ -17,19 +17,18 @@ export const { setUser } = userSlice.actions
 
 export const login = (userObject) => {
   return async (dispatch) => {
-    try{
+    try {
       const user = await loginService.login(userObject)
       window.localStorage.setItem('loggedBlogAppUser', JSON.stringify(user))
       blogService.setToken(user.token)
       dispatch(setUser(user))
-    }catch (exception) {
+    } catch (exception) {
       dispatch(showNotification(`wrong credentials`, 'error', 5))
     }
-    
   }
 }
 
-export const logout = (userObject) =>{
+export const logout = (userObject) => {
   return async (dispatch) => {
     window.localStorage.removeItem('loggedBlogAppUser')
     blogService.setToken(null)

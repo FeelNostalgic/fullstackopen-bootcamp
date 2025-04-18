@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import { login } from '../reducers/userReducer'
 import { useDispatch } from 'react-redux'
 
-const LoginForm = ({ handleLogin }) => {
+const LoginForm = () => {
   const dispatch = useDispatch()
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')

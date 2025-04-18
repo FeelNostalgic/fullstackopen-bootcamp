@@ -11,8 +11,7 @@ const blogsSlice = createSlice({
     },
     like(state, action) {
       const updatedBlog = action.payload
-      state = state.map(blog => blog.id === updatedBlog.id ? updatedBlog : blog)
-      return state
+      return state.map(blog => blog.id === updatedBlog.id ? updatedBlog : blog)
     },
     remove(state, action) {
       return state.filter(blog => blog.id !== action.payload.id)
