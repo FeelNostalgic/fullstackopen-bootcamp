@@ -18,7 +18,7 @@ const Blog = ({ blog, sendLike, sendDelete, user }) => {
 
   const handleLike = () => {
     sendLike(blog)
-  } 
+  }
 
   const handleDelete = () => {
     sendDelete(blog)
@@ -30,13 +30,13 @@ const Blog = ({ blog, sendLike, sendDelete, user }) => {
       <Button onClick={() => toggleVisibility()} text={visible ? 'hide' : 'view'} />
       {visible && (
         <div className="blog-details">
-          <p className="blog-url">{blog.url}</p>
+          <p className="blog-url"><a href={blog.url}>{blog.url}</a></p>
           <div className="blog-likes">
             likes {blog.likes} <Button onClick={handleLike} text='like' />
           </div>
           <p className="blog-user">{blog.user.username}</p>
           {blog.user.username === user.username && (
-            <Button onClick={handleDelete} text='remove' style={{ backgroundColor: 'red', color: 'white' }}/>
+            <Button onClick={handleDelete} text='remove' style={{ backgroundColor: 'red', color: 'white' }} />
           )}
         </div>
       )}

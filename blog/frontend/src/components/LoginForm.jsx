@@ -1,7 +1,10 @@
 import { useState } from 'react'
 import PropTypes from 'prop-types'
+import { login } from '../reducers/userReducer'
+import { useDispatch } from 'react-redux'
 
 const LoginForm = ({ handleLogin }) => {
+  const dispatch = useDispatch()
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
 
@@ -15,7 +18,7 @@ const LoginForm = ({ handleLogin }) => {
 
   const handleSubmit = (event) => {
     event.preventDefault()
-    handleLogin({ username, password })
+    dispatch(login({ username, password }))
     setUsername('')
     setPassword('')
   }
