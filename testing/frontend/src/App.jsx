@@ -9,13 +9,16 @@ import NoteForm from './components/NoteForm'
 import Togglable from './components/Toggleable'
 import noteService from './services/notes'
 import loginService from './services/login'
+import { useDispatch } from 'react-redux'
+import { showNotification } from './reducers/notificationReducer'
 
 import './index.css'
 
 const App = () => {
+  const dispatch = useDispatch()
+
   const [notes, setNotes] = useState([])
   const [showAll, setShowAll] = useState(true)
-  const [notification, setNotification] = useState({ message: null, type: null })
   const [user, setUser] = useState(null) //user token
 
   useEffect(() => {
@@ -53,13 +56,10 @@ const App = () => {
       window.localStorage.setItem('loggedNoteAppUser', JSON.stringify(user))
       noteService.setToken(user.token)
       setUser(user)
-      setNotification({ message: 'Successfully logged in', type: 'success' })
+      dispatch(showNotification(`Successfully logged in`, 'success', 5))
     } catch (exception) {
-      setNotification({ message: 'wrong credentials', type: 'error' })
+      dispatch(showNotification(`wrong credentials`, 'error', 5))
     }
-    setTimeout(() => {
-      setNotification({ message: null, type: null })
-    }, 5000)
   }
 
   const toggleImportanceOf = async (id) => {
@@ -70,10 +70,7 @@ const App = () => {
       const updatedNote = await noteService.update(id, changeNote)
       setNotes(notes.map(n => n.id !== id ? n : updatedNote))
     } catch (exception) {
-      setNotification({ message: 'Note was already removed from server', type: 'error' })
-      setTimeout(() => {
-        setNotification({ message: null, type: null })
-      }, 5000)
+      dispatch(showNotification(`Note was already removed from server`,'error', 5))
       setNotes(notes.filter(n => n.id !== id))
     }
   }
@@ -123,7 +120,7 @@ const App = () => {
   return (
     <div>
       <Header text='Notes' />
-      <Notification message={notification.message} type={notification.type} />
+      <Notification />
 
       {
         user === null
