@@ -2,7 +2,7 @@ import Button from './Button'
 import { useDispatch, useSelector } from 'react-redux'
 import {logout} from '../reducers/userReducer'
 
-const UserInfo = () => {
+const UserLogginInfo = () => {
   const dispatch = useDispatch()
   const user = useSelector(({ user }) => user)
 
@@ -15,4 +15,4 @@ const UserInfo = () => {
   )
 }
 
-export default UserInfo 
+export default UserLogginInfo 
