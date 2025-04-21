@@ -7,11 +7,10 @@ const UserLogginInfo = () => {
   const user = useSelector(({ user }) => user)
 
   return (
-    <div>
+    <>
       {user.name} logged in 
-      <div><Button onClick={() => dispatch(logout())} text='logout' /></div>
-      <p></p>
-    </div>
+      <Button onClick={() => dispatch(logout())} text='logout' />
+    </>
   )
 }
 

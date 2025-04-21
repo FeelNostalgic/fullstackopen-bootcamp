@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { Routes, Route, Navigate, useNavigate } from 'react-router-dom'
+import { Routes, Route, Navigate, useNavigate, Link } from 'react-router-dom'
 
 import UserLogginInfo from './components/UserLogginInfo'
 import { Header2 } from './components/Headers'
@@ -9,7 +9,7 @@ import Notification from './components/Notification'
 import TogglableLoginForm from './components/TogglableLoginForm'
 import TogglableBlogForm from './components/TogglableBlogForm'
 import UsersList from './components/UsersList'
-import UserBlogInfo from './components/UserBlogInfo' 
+import UserBlogInfo from './components/UserBlogInfo'
 import BlogInfo from './components/BlogInfo'
 
 import { setUser } from './reducers/userReducer'
@@ -54,11 +54,32 @@ const App = () => {
     )
   }
 
+  const padding = {
+    padding: '20px',
+    color: 'black',
+    display: 'inline'
+  }
+
+  const background = {
+    backgroundColor: 'lightgray',
+    height: '30px'
+  }
+
+  const NavigationBar = () => {
+    return (
+      <div style={background}>
+        <Link style={padding} to="/">Blogs</Link>
+        <Link style={padding} to="/users">Users</Link>
+        {user !== null && <UserLogginInfo />}
+      </div>)
+  }
+
   return (
     <div>
+      {user !== null && <NavigationBar/>}
       <Header2 text={user === null ? 'Login to application' : 'Blogs'} />
       <Notification />
-      {user !== null && <UserLogginInfo />}
+      
 
       <Routes>
         <Route path="/" element={user ? <Home /> : <Navigate replace to="/login" />} />
