@@ -18,19 +18,13 @@ const Blogs = ({ user }) => {
     }
   }
 
-  const blogStyle = {
-    paddingTop: 10,
-    paddingLeft: 2,
-    border: 'solid',
-    borderWidth: 1,
-    marginBottom: 5
-  }
-
   return (
-    <div>
+    <div className="space-y-4 bg-default rounded-lg shadow-md pb-2">
+      <h2 className="text-2xl mx-4 my-6 font-bold text-gray-800 pt-5">Blogs</h2>
       {blogs.map(blog =>
-        <div key={blog.id} style={blogStyle}>
-          <a href={`/blogs/${blog.id}`}>{blog.title}</a>
+        <div key={blog.id} className='p-3 border rounded-md bg-primary hover:bg-green-100 transition-colors m-6'>
+          <a href={`/blogs/${blog.id}`} className="text-blue-600 hover:text-blue-800 text-lg"> {blog.title}</a>
+          <div className="text-gray-600 text-xs">{blog.author}</div>
         </div>
       )}
     </div>

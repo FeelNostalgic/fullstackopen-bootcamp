@@ -13,11 +13,11 @@ const BlogForm = ({ newBlog }) => {
 
   const handleAuthorChange = (event) => {
     setAuthor(event.target.value)
-  } 
+  }
 
   const handleUrlChange = (event) => {
     setUrl(event.target.value)
-  } 
+  }
 
   const handleSubmit = (event) => {
     event.preventDefault()
@@ -26,27 +26,45 @@ const BlogForm = ({ newBlog }) => {
     setAuthor('')
     setUrl('')
   }
-  
+
   return (
-    <div>
+    <div className="space-y-4">
       <Header2 text='Create new blog' />
-      <form id="blog-form" onSubmit={handleSubmit}>
-        <div>
-          title:
-          <input id="title-input" type="text" value={title} onChange={handleTitleChange} />
+      <form id="blog-form" onSubmit={handleSubmit} className="space-y-3">
+        <div className="flex flex-col">
+          <label className="text-gray-700 mb-1">Title:</label>
+          <input
+            id="title-input"
+            type="text"
+            value={title}
+            onChange={handleTitleChange}
+            className="border rounded border-gray-300 px-3 py-1 focus:outline-none focus:ring-2 focus:ring-blue-400"
+          />
         </div>
-        <div>
-          author:
-          <input id="author-input" type="text" value={author} onChange={handleAuthorChange} />
+        <div className="flex flex-col">
+          <label className="text-gray-700 mb-1">Author:</label>
+          <input
+            id="author-input"
+            type="text"
+            value={author}
+            onChange={handleAuthorChange}
+            className="border rounded border-gray-300 px-3 py-1 focus:outline-none focus:ring-2 focus:ring-blue-400"
+          />
         </div>
-        <div>
-          url:
-          <input id="url-input" type="text" value={url} onChange={handleUrlChange} />
+        <div className="flex flex-col">
+          <label className="text-gray-700 mb-1">URL:</label>
+          <input
+            id="url-input"
+            type="text"
+            value={url}
+            onChange={handleUrlChange}
+            className="border rounded border-gray-300 px-3 py-1 focus:outline-none focus:ring-2 focus:ring-blue-400"
+          />
         </div>
-        <button type="submit">create</button>
+        <button type="submit" className="bg-green-500 hover:bg-green-600 text-white font-medium py-2 px-10 rounded transition-colors">Create</button>
       </form>
     </div>
   )
-}       
+}
 
 export default BlogForm

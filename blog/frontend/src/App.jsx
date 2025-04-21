@@ -2,8 +2,6 @@ import { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Routes, Route, Navigate, useNavigate, Link } from 'react-router-dom'
 
-import UserLogginInfo from './components/UserLogginInfo'
-import { Header2 } from './components/Headers'
 import Blogs from './components/Blogs'
 import Notification from './components/Notification'
 import TogglableLoginForm from './components/TogglableLoginForm'
@@ -11,6 +9,7 @@ import TogglableBlogForm from './components/TogglableBlogForm'
 import UsersList from './components/UsersList'
 import UserBlogInfo from './components/UserBlogInfo'
 import BlogInfo from './components/BlogInfo'
+import NavigationBar from './components/NavigationBar'
 
 import { setUser } from './reducers/userReducer'
 import { initializeBlogs } from './reducers/blogsReducer'
@@ -38,7 +37,7 @@ const App = () => {
 
   const Home = () => {
     return (
-      <div>
+      <div className="max-w-4xl mx-auto px-4 py-6 space-y-8">
         <TogglableBlogForm />
         <p></p>
         <Blogs user={user} />
@@ -54,33 +53,11 @@ const App = () => {
     )
   }
 
-  const padding = {
-    padding: '20px',
-    color: 'black',
-    display: 'inline'
-  }
-
-  const background = {
-    backgroundColor: 'lightgray',
-    height: '30px'
-  }
-
-  const NavigationBar = () => {
-    return (
-      <div style={background}>
-        <Link style={padding} to="/">Blogs</Link>
-        <Link style={padding} to="/users">Users</Link>
-        {user !== null && <UserLogginInfo />}
-      </div>)
-  }
-
   return (
     <div>
-      {user !== null && <NavigationBar/>}
-      <Header2 text={user === null ? 'Login to application' : 'Blogs'} />
+      {user !== null && <NavigationBar user={user} />}
       <Notification />
       
-
       <Routes>
         <Route path="/" element={user ? <Home /> : <Navigate replace to="/login" />} />
         <Route path="home" element={user ? <Home /> : <Navigate replace to="/login" />} />
