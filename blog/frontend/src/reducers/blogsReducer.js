@@ -9,7 +9,7 @@ const blogsSlice = createSlice({
     appendBlog(state, action) {
       state.push(action.payload)
     },
-    like(state, action) {
+    updateBlog(state, action){
       const updatedBlog = action.payload
       return state.map(blog => blog.id === updatedBlog.id ? updatedBlog : blog)
     },
@@ -22,7 +22,7 @@ const blogsSlice = createSlice({
   }
 })
 
-export const { appendBlog, like, remove, setBlogs } = blogsSlice.actions
+export const { appendBlog, updateBlog, remove, setBlogs } = blogsSlice.actions
 
 export const initializeBlogs = () => {
   return async (dispatch) => {
@@ -44,9 +44,20 @@ export const likeBlog = (blog) => {
     const updatedObject = { ...blog, likes: blog.likes + 1 }
     try {
       const updatedBlog = await blogService.update(blog.id, updatedObject)
-      dispatch(like(updatedBlog))
+      dispatch(updateBlog(updatedBlog))
     } catch (exception) {
-      dispatch(showNotification('Error updating blog', 'error', 5))
+      dispatch(showNotification('Error liking blog', 'error', 5))
+    }
+  }
+}
+
+export const addComentToBlog = (blog, comment) => {
+  return async (dispatch) => {
+    try {      
+      const updatedBlog = await blogService.comment(blog.id, comment)
+      dispatch(updateBlog(updatedBlog))
+    } catch (exception) {
+      dispatch(showNotification('Error adding comment', 'error', 5))
     }
   }
 }

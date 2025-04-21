@@ -13,7 +13,7 @@ blogRouter.post('', async (request, response) => {
     const body = request.body
     const user = await User.findById(request.user)
 
-    if(!user){
+    if (!user) {
         return response.status(401).json({ error: 'unauthorized' })
     }
 
@@ -31,12 +31,29 @@ blogRouter.post('', async (request, response) => {
     response.status(201).json(savedBlog)
 })
 
-// DELETE: delete a blog
-blogRouter.delete('/:id', async (request, response) => {        
-    const user = await User.findById(request.user)
-    
+//POST: add commento to blog
+blogRouter.post('/:id/comments', async (request, response) => {
+    const { comment } = request.body
+    console.log(comment)
+
+    // Comments are anonymous
+    // const user = await User.findById(request.user)
     const blog = await Blog.findById(request.params.id)
-    if(!blog){
+    if (!blog) {
+        return response.status(404).end()
+    }
+    const comments = [...blog.comments, comment]
+    blog.comments = comments
+    const updatedBlog = await blog.save()
+    response.status(200).json(updatedBlog)
+})
+
+// DELETE: delete a blog
+blogRouter.delete('/:id', async (request, response) => {
+    const user = await User.findById(request.user)
+
+    const blog = await Blog.findById(request.params.id)
+    if (!blog) {
         return response.status(404).end()
     }
 
@@ -60,15 +77,15 @@ blogRouter.put('/:id', async (request, response) => {
     const userObject = await User.findById(user.id)
 
     const blog = await Blog.findById(request.params.id)
-    if (!blog) {        
+    if (!blog) {
         return response.status(404).end()
     }
 
     // if (blog.user.toString() !== user.id.toString()) {
     //     return response.status(401).json({ error: 'unauthorized' })
     // }
-    
-    blog.user = userObject;    
+
+    blog.user = userObject;
     blog.title = title
     blog.author = author
     blog.url = url
