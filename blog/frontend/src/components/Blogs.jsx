@@ -3,27 +3,37 @@ import { likeBlog, deleteBlog } from '../reducers/blogsReducer'
 import { selectBlogsSortedByLikes } from '../selectors/blogSelectors'
 import Blog from './Blog'
 
-const Blogs = ({user}) => {
+const Blogs = ({ user }) => {
   const dispatch = useDispatch()
 
   const blogs = useSelector(selectBlogsSortedByLikes)
-  
+
   const handleLike = async (blogObject) => {
     dispatch(likeBlog(blogObject))
   }
-  
+
   const handleDelete = async (blogObject) => {
     if (window.confirm('Are you sure you want to delete this blog?')) {
       dispatch(deleteBlog(blogObject))
     }
   }
-  
+
+  const blogStyle = {
+    paddingTop: 10,
+    paddingLeft: 2,
+    border: 'solid',
+    borderWidth: 1,
+    marginBottom: 5
+  }
+
   return (
-   <div>
+    <div>
       {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} sendLike={handleLike} sendDelete={handleDelete} user={user} />
+        <div key={blog.id} style={blogStyle}>
+          <a href={`/blogs/${blog.id}`}>{blog.title}</a>
+        </div>
       )}
-   </div>
+    </div>
   )
 }
 

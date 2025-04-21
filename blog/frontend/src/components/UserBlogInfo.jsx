@@ -15,13 +15,12 @@ const UserBlogInfo = () => {
       <Header2 text={user.name} />
       <h3>added blogs</h3>
       <ul>
-      {user.blogs.map(blog => (
-        <li key={blog.id}>
-          {blog.title}
-        </li>
-      ))}
+        {user.blogs.map(blog => (
+          <li key={blog.id}>
+            <a href={`/blogs/${blog.id}`}>{blog.title}</a>
+          </li>
+        ))}
       </ul>
-
     </div>
   )
 }

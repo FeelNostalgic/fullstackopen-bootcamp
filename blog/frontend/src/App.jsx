@@ -10,6 +10,7 @@ import TogglableLoginForm from './components/TogglableLoginForm'
 import TogglableBlogForm from './components/TogglableBlogForm'
 import UsersList from './components/UsersList'
 import UserBlogInfo from './components/UserBlogInfo' 
+import BlogInfo from './components/BlogInfo'
 
 import { setUser } from './reducers/userReducer'
 import { initializeBlogs } from './reducers/blogsReducer'
@@ -46,8 +47,6 @@ const App = () => {
   }
 
   const Login = () => {
-    if (user) navigate('/')
-
     return (
       <div>
         <TogglableLoginForm />
@@ -67,6 +66,7 @@ const App = () => {
         <Route path="/login" element={<Login />} />
         <Route path="/users" element={<UsersList />} />
         <Route path="/users/:id" element={<UserBlogInfo />} />
+        <Route path="/blogs/:id" element={<BlogInfo user={user} />} />
       </Routes>
     </div>
   )
