@@ -1,10 +1,17 @@
 @import "tailwindcss";
 
-@theme{
-    --color-primary: #ecefca;
-    --color-secondary: #94b4c1;
-    --color-default: #547792;
-    --color-dark: #213448;
+@theme {
+    --color-body: #ecefca;
+    --color-dark: #32021f;
+    --color-dark-50: #593647;
+    --color-primary: #614b64;
+    --color-light-50: #6c7a89;
+    --color-light: #6c939d;
+}
+
+body {
+    @apply text-body;
+    @apply bg-dark-50;
 }
 
 .error {

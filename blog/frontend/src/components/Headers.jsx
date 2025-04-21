@@ -1,10 +1,10 @@
 const Header = ({ text }) =>
-  <h1 className="text-2xl font-bold text-gray-800">
+  <h1 className="text-2xl font-bold">
     {text}
   </h1>
 
 const Header2 = ({ text }) =>
-  <h2 className="text-xl font-bold text-gray-800">
+  <h2 className="text-xl font-bold">
     {text}
   </h2>
 

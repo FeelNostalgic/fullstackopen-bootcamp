@@ -2,40 +2,46 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useDispatch } from 'react-redux'
 import { logout } from '../reducers/userReducer'
+import { useNavigate } from 'react-router-dom'
 
-const NavigationBar = ({ user }) => {
+const NavBar = ({ user }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const dispatch = useDispatch() 
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    dispatch(logout())
+    navigate('/login')
+  }
 
   const UserLogginInfo = () => (
     <div className="flex items-center space-x-4">
       <span className="text-white text-xl">{user.name}</span>
-      <button className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm transition-colors" onClick={() => dispatch(logout())}>
+      <button className="bg-dark-50 hover:bg-red-900 text-body px-3 py-1 rounded text-sm transition-colors" onClick={handleLogout}>
         Logout
       </button>
     </div>
   );
-
   return (
-    <nav className="bg-blue-500 shadow-md">
+    <nav className="bg-dark shadow-md">
       <div className="max-w-6xl mx-auto px-4">
         <div className="flex justify-between h-16">
           <div className='flex items-center'>
             {/* Title */}
             <div className="flex-shrink-0 flex items-center">
-              <span className="font-bold text-xl text-yellow-400">Blogs App</span>
+              <span className="font-bold text-xl text-yellow-500">Blogs App</span>
             </div>
             {/* Desktop links */}
             <div className="hidden md:flex items-center ml-10 space-x-8">
               <Link
                 to="/"
-                className="text-gray-200 hover:text-white px-3 py-2 rounded-md text-sm font-medium border-b-2 border-transparent hover:border-yellow-400 transition-all"
+                className="text-body hover:text-white px-3 py-2 rounded-md text-sm font-medium border-b-2 border-transparent hover:border-yellow-500 transition-all"
               >
                 Blogs
               </Link>
               <Link
                 to="/users"
-                className="text-gray-200 hover:text-white px-3 py-2 rounded-md text-sm font-medium border-b-2 border-transparent hover:border-yellow-400 transition-all"
+                className="text-body hover:text-white px-3 py-2 rounded-md text-sm font-medium border-b-2 border-transparent hover:border-yellow-500 transition-all"
               >
                 Users
               </Link>
@@ -50,7 +56,7 @@ const NavigationBar = ({ user }) => {
           <div className="md:hidden flex items-center">
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="inline-flex items-center justify-center p-2 rounded-md text-gray-200 hover:text-white hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500"
+              className="inline-flex items-center justify-center p-2 rounded-md text-body hover:text-white hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500"
               aria-expanded="false"
             >
               <span className="sr-only">Abrir menú principal</span>
@@ -86,14 +92,14 @@ const NavigationBar = ({ user }) => {
         <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
           <Link
             to="/"
-            className="text-gray-100 hover:text-white block px-3 py-2 rounded-md text-base font-medium"
+            className="text-body hover:text-white block px-3 py-2 rounded-md text-base font-medium"
             onClick={() => setIsOpen(false)}
           >
             Blogs
           </Link>
           <Link
             to="/users"
-            className="text-gray-100 hover:text-white block px-3 py-2 rounded-md text-base font-medium"
+            className="text-body hover:text-white block px-3 py-2 rounded-md text-base font-medium"
             onClick={() => setIsOpen(false)}
           >
             Users
@@ -111,4 +117,4 @@ const NavigationBar = ({ user }) => {
   );
 }
 
-export default NavigationBar
+export default NavBar

@@ -3,7 +3,7 @@ import Togglable from './Togglable'
 
 const TogglableLoginForm = ({ handleLogin }) => {
     return (
-        <Togglable buttonLabel='login'>
+        <Togglable buttonLabel='Login'>
             <LoginForm />
         </Togglable>
     )

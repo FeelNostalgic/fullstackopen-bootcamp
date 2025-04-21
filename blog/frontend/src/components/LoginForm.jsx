@@ -10,8 +10,8 @@ const LoginForm = () => {
   const [password, setPassword] = useState('')
 
   const navigate = useNavigate()
-  useEffect(()=>{
-    if(window.localStorage.getItem('loggedBlogAppUser') !== null) {
+  useEffect(() => {
+    if (window.localStorage.getItem('loggedBlogAppUser') !== null) {
       navigate('/')
     }
   }, [])
@@ -32,25 +32,31 @@ const LoginForm = () => {
   }
 
   return (
-    <div>
-      <form onSubmit={handleSubmit}>
-        <div>
-          username
+    <div className="space-y-4">
+      <form onSubmit={handleSubmit} className="space-y-3">
+        <div className="flex flex-col">
+          <label className="mb-1">Usename</label>
           <input
             type='text'
             value={username}
             onChange={handleUsernameChange}
+            className="border rounded border-body px-3 py-1 focus:outline-none focus:ring-2 focus:ring-light"
           />
         </div>
-        <div>
-          password
+        <div className='flex flex-col'>
+          <label className="mb-1">Password</label>
           <input
             type='password'
             value={password}
             onChange={handlePasswordChange}
+            className="border rounded border-body px-3 py-1 focus:outline-none focus:ring-2 focus:ring-light"
           />
         </div>
-        <button type='submit'>login</button>
+        <button type='submit'
+          className="bg-primary hover:bg-dark-50 font-medium w-32 py-2 px-10 rounded transition-colors"
+        >
+          Login
+        </button>
       </form>
     </div>
   )

@@ -1,7 +1,6 @@
 import { useDispatch, useSelector } from 'react-redux'
 import { likeBlog, deleteBlog } from '../reducers/blogsReducer'
 import { selectBlogsSortedByLikes } from '../selectors/blogSelectors'
-import Blog from './Blog'
 
 const Blogs = ({ user }) => {
   const dispatch = useDispatch()
@@ -19,12 +18,12 @@ const Blogs = ({ user }) => {
   }
 
   return (
-    <div className="space-y-4 bg-default rounded-lg shadow-md pb-2">
-      <h2 className="text-2xl mx-4 my-6 font-bold text-gray-800 pt-5">Blogs</h2>
+    <div className="space-y-4 bg-light-50 rounded-lg shadow-md pb-2">
+      <h2 className="text-2xl mx-4 my-6 font-bold pt-5">Blogs</h2>
       {blogs.map(blog =>
-        <div key={blog.id} className='p-3 border rounded-md bg-primary hover:bg-green-100 transition-colors m-6'>
-          <a href={`/blogs/${blog.id}`} className="text-blue-600 hover:text-blue-800 text-lg"> {blog.title}</a>
-          <div className="text-gray-600 text-xs">{blog.author}</div>
+        <div key={blog.id} className='p-3 border border-primary rounded-md bg-light hover:bg-primary transition-colors m-6'>
+          <a href={`/blogs/${blog.id}`} className="hover:text-dark text-lg"> {blog.title}</a>
+          <div className="text-dark text-xs">{blog.author}</div>
         </div>
       )}
     </div>

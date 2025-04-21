@@ -9,7 +9,7 @@ import TogglableBlogForm from './components/TogglableBlogForm'
 import UsersList from './components/UsersList'
 import UserBlogInfo from './components/UserBlogInfo'
 import BlogInfo from './components/BlogInfo'
-import NavigationBar from './components/NavigationBar'
+import NavBar from './components/NavBar'
 
 import { setUser } from './reducers/userReducer'
 import { initializeBlogs } from './reducers/blogsReducer'
@@ -21,7 +21,6 @@ import './index.css'
 
 const App = () => {
   const dispatch = useDispatch()
-  const navigate = useNavigate()
   const user = useSelector(({ user }) => user)
 
   useEffect(() => {
@@ -47,17 +46,19 @@ const App = () => {
 
   const Login = () => {
     return (
-      <div>
-        <TogglableLoginForm />
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="w-full max-w-xl space-y-8 bg-light-50 my-4 rounded-lg p-4 shadow-sm">
+          <TogglableLoginForm />
+        </div>
       </div>
     )
   }
 
   return (
     <div>
-      {user !== null && <NavigationBar user={user} />}
+      {user !== null && <NavBar user={user} />}
       <Notification />
-      
+
       <Routes>
         <Route path="/" element={user ? <Home /> : <Navigate replace to="/login" />} />
         <Route path="home" element={user ? <Home /> : <Navigate replace to="/login" />} />

@@ -16,7 +16,7 @@ const TogglableBlogForm = () => {
   }
 
   return (
-    <div className="max-w-md mx-auto">
+    <div className="bg-light-50 my-4 rounded-lg p-4 shadow-sm">
     <Togglable buttonLabel='Create new blog' ref={blogFormRef}>
       <BlogForm newBlog={createNewBlog} />
     </Togglable>
