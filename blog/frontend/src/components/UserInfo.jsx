@@ -8,7 +8,9 @@ const UserInfo = () => {
 
   return (
     <div>
-      {user.name} logged in <Button onClick={() => dispatch(logout())} text='logout' />
+      {user.name} logged in 
+      <div><Button onClick={() => dispatch(logout())} text='logout' /></div>
+      <p></p>
     </div>
   )
 }
