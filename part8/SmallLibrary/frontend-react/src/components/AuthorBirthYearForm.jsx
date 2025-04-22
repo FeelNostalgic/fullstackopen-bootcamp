@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { useMutation } from '@apollo/client'
+import { useEffect, useState } from 'react'
+import { useMutation, useQuery } from '@apollo/client'
 import { EDIT_AUTHOR, ALL_AUTHORS } from '../queries'
 
 const AuthorBirthYearForm = () => {
@@ -11,13 +11,26 @@ const AuthorBirthYearForm = () => {
   }
   )
 
+  const authors = useQuery(ALL_AUTHORS)
+
+  useEffect(() => {
+    setName(authors.data.allAuthors[0].name)
+  }, [authors])
+
   const submit = (event) => {
     event.preventDefault()
 
+    console.log(name, born);
+    
     editAuthor({ variables: { name, born: Number(born) } })
 
-    setName('')
     setBorn('')
+  }
+
+  if(authors.loading){
+    return(
+      <div>loading...</div>
+    )
   }
 
   return (
@@ -25,10 +38,16 @@ const AuthorBirthYearForm = () => {
       <h2>Set birthyear</h2>
       <form onSubmit={submit}>
         <div>
-          <label>name:</label>
-          <input value={name}
-            onChange={({ target }) => setName(target.value)}
-          />
+          <select onChange={({ target }) => setName(target.value)} value={name}>
+            {authors.data.allAuthors.map((author) => (
+              <option 
+              key={author.name} 
+              value={author.name}
+              >
+                {author.name}
+              </option>
+            ))}
+          </select>
         </div>
         <div>
           <label>born:</label>
