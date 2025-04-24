@@ -6,7 +6,7 @@ const Authors = () => {
 
   if (result.loading) {
     return <div>loading...</div>
-  }
+  } 
 
   return (
     <div>
@@ -22,7 +22,7 @@ const Authors = () => {
             <tr key={author.id}>
               <td>{author.name}</td>
               <td>{author.born}</td>
-              <td>{author.bookCount}</td>
+              <td>{author.books.length}</td>
             </tr>
           ))}
         </tbody>

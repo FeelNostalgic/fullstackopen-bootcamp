@@ -36,7 +36,7 @@ const resolvers = {
       }).populate('author');
     },
     allAuthors: async () => {
-      const authors = await Author.find({})
+      const authors = await Author.find({}).populate('books')
       return authors
     },
     me: (root, args, context) => {
@@ -46,11 +46,6 @@ const resolvers = {
       const books = await Book.find({}).populate('author')
       const genres = books.map(book => book.genres)
       return Array.from(new Set(genres.flat()))
-    }
-  },
-  Author: {
-    bookCount: async (root) => {
-      return await Book.countDocuments({ author: root._id });
     }
   },
   Mutation: {
@@ -81,10 +76,21 @@ const resolvers = {
       const author = await Author.findOne({ name: args.author })
 
       try {
+        // Create and save the new book
         const book = new Book({ ...args, author: author._id })
         const savedBook = await book.save()
+
+        // Add the book to the author's books array and save the author
+        author.books = author.books.concat(savedBook._id)
+        await author.save()
+
+        // Populate the author field for the savedBook before publishing
+        // await savedBook.populate('author')
         savedBook.author = author
+
+        // Publish the subscription event
         pubsub.publish('BOOK_ADDED', { bookAdded: savedBook })
+
         return savedBook
       } catch (error) {
         throw new GraphQLError('Saving book failed', {
