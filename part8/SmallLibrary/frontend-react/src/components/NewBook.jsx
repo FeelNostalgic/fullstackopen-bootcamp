@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { ADD_BOOK, ALL_BOOKS } from '../queries'
 import { useMutation } from '@apollo/client'
+import Notify from './Notify'
 
 const NewBook = () => {
   const [title, setTitle] = useState('')
@@ -8,9 +9,20 @@ const NewBook = () => {
   const [published, setPublished] = useState('')
   const [genre, setGenre] = useState('')
   const [genres, setGenres] = useState([])
+  const [error, setError] = useState('')
 
   const [addBook] = useMutation(ADD_BOOK, {
-    refetchQueries: [{ query: ALL_BOOKS }]
+    onError: (error) => {
+      const messages = error.graphQLErrors.map(e => e.message).join('\n')
+      setError(messages)
+    },
+    update: (cache, response) => {
+      cache.updateQuery({ query: ALL_BOOKS }, ({ allBooks }) => {
+        return {
+          allBooks: allBooks.concat(response.data.addBook),
+        }
+      })
+    },
   })
 
   const submit = async (event) => {
@@ -32,6 +44,7 @@ const NewBook = () => {
 
   return (
     <div>
+      <Notify message={error} />
       <form onSubmit={submit}>
         <div>
           title

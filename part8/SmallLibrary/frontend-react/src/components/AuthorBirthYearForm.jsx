@@ -19,9 +19,7 @@ const AuthorBirthYearForm = () => {
 
   const submit = (event) => {
     event.preventDefault()
-
-    console.log(name, born);
-    
+        
     editAuthor({ variables: { name, born: Number(born) } })
 
     setBorn('')
