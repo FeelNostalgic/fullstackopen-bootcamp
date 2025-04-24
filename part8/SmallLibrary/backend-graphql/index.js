@@ -1,11 +1,12 @@
-import { ApolloServer } from '@apollo/server'
-import { startStandaloneServer } from '@apollo/server/standalone'
-import { GraphQLError } from 'graphql'
-import mongoose from 'mongoose'
-import jwt from 'jsonwebtoken'
-import Author from './models/author'
-import Book from './models/book'
-import User from './models/user'
+const { ApolloServer } = require('@apollo/server')
+const { startStandaloneServer } = require('@apollo/server/standalone')
+const { GraphQLError } = require('graphql')
+const jwt = require('jsonwebtoken')
+const mongoose = require('mongoose')
+mongoose.set('strictQuery', false)
+const Book = require('./models/book')
+const User = require('./models/user')
+const Author = require('./models/author')
 
 require('dotenv').config()
 
@@ -234,37 +235,37 @@ const resolvers = {
       return author.save()
     },
     createUser: async (root, args) => {
-          const user = new User({ username: args.username, password: args.password })
-    
-          return user.save()
-            .catch(error => {
-              throw new GraphQLError('Creating the user failed', {
-                extensions: {
-                  code: 'BAD_USER_INPUT',
-                  invalidArgs: args.username,
-                  error
-                }
-              })
-            })
-        },
-        login: async (root, args) => {
-          const user = await User.findOne({ username: args.username })
-    
-          if (!user || args.password !== 'secret') {
-            throw new GraphQLError('wrong credentials', {
-              extensions: {
-                code: 'BAD_USER_INPUT'
-              }
-            })
+      const user = new User({ username: args.username, password: args.password })
+
+      return user.save()
+        .catch(error => {
+          throw new GraphQLError('Creating the user failed', {
+            extensions: {
+              code: 'BAD_USER_INPUT',
+              invalidArgs: args.username,
+              error
+            }
+          })
+        })
+    },
+    login: async (root, args) => {
+      const user = await User.findOne({ username: args.username })
+
+      if (!user || args.password !== 'secret') {
+        throw new GraphQLError('wrong credentials', {
+          extensions: {
+            code: 'BAD_USER_INPUT'
           }
-    
-          const userForToken = {
-            username: user.username,
-            id: user._id,
-          }
-    
-          return { value: jwt.sign(userForToken, process.env.JWT_SECRET) }
-        },
+        })
+      }
+
+      const userForToken = {
+        username: user.username,
+        id: user._id,
+      }
+
+      return { value: jwt.sign(userForToken, process.env.JWT_SECRET) }
+    },
   }
 }
 

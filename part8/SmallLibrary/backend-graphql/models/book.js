@@ -1,4 +1,4 @@
-import mongoose from 'mongoose'
+const mongoose = require('mongoose')
 
 // you must install this library
 const uniqueValidator = require('mongoose-unique-validator')
