@@ -3,20 +3,15 @@ import { ALL_BOOKS } from '../queries'
 import { useState } from 'react'
 
 const Books = () => {
-  const [genre, setGenre] = useState('all genres')
+  const [genre, setGenre] = useState('')
 
   const result = useQuery(ALL_BOOKS, {
-    pollInterval: 3000
+    pollInterval: 3000,
+    variables: { genre: genre }
   })
 
   if (result.loading) {
     return <div>loading...</div>
-  }
-
-  const filteredBooks = () => {
-    return result.data.allBooks.filter((book) => {
-      return genre === 'all genres' || book.genres.includes(genre)
-    })
   }
 
   return (
@@ -25,10 +20,8 @@ const Books = () => {
 
       <div>
         <span>
-          {genre !== 'all genres' 
-            ? <div>
-              in genre <strong>{genre}</strong>
-            </div>
+          {genre !== ''
+            ? <div> in genre <strong>{genre}</strong> </div>
             : null
           }
         </span>
@@ -41,7 +34,7 @@ const Books = () => {
             <th>author</th>
             <th>published</th>
           </tr>
-          {filteredBooks().map((book) => (
+          {result.data.allBooks.map((book) => (
             <tr key={book.id}>
               <td>{book.title}</td>
               <td>{book.author.name}</td>
@@ -57,7 +50,7 @@ const Books = () => {
             <button key={genre} onClick={() => setGenre(genre)}>{genre}</button>
           ))
         }
-        <button key={'allGenres'} onClick={() => setGenre('all genres')}>all genres</button>
+        <button key={'allGenres'} onClick={() => setGenre('')}>all genres</button>
       </div>
     </div>
   )

@@ -153,6 +153,7 @@ type Mutation {
 
   createUser(
     username: String!
+    favoriteGenre: String!
   ): User
 
   login(
@@ -171,7 +172,21 @@ const resolvers = {
         const books = await Book.find({}).populate('author')
         return books
       }
-      return await Book.find({
+
+      if (!args.author) { // Only genres
+        return await Book.find({
+          genres: args.genre
+        }).populate('author');
+      }
+
+      if (!args.genre) { // Only author 
+        const author = await Author.findOne({ name: args.author })
+        return await Book.find({
+          author: author._id
+        }).populate('author');
+      }
+
+      return await Book.find({ // Both
         author: args.author,
         genres: args.genre
       }).populate('author');
