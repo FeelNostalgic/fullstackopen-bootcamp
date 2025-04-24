@@ -212,45 +212,44 @@ const resolvers = {
   Mutation: {
     addBook: async (root, args, context) => {
       const currentUser = context.currentUser
-
+    
       if (!currentUser) {
         throw new GraphQLError('not authenticated', {
+          extensions: { code: 'BAD_USER_INPUT' }
+        })
+      }
+    
+      try {
+        let author = await Author.findOne({ name: args.author })
+        if (!author) {
+          await new Author({ name: args.author }).save()
+        }
+      } catch (error) {
+        throw new GraphQLError('Creating author failed', {
           extensions: {
             code: 'BAD_USER_INPUT',
+            invalidArgs: args.author,
+            error: error.message
           }
         })
       }
-
-      let author = await Author.findOne({ name: args.author })
-      if (!author) {
-        author = new Author({
-          name: args.author,
-        })
-        await author.save()
-          .catch(error => {
-            throw new GraphQLError('Creating author failed', {
-              extensions: {
-                code: 'BAD_USER_INPUT',
-                invalidArgs: args.author,
-                error: 'Creating author failed'
-            }
-          })
-        })
-      }
-
+    
+      const author = await Author.findOne({ name: args.author })
       console.log(author)
 
-      const book = new Book({ ...args, author: author._id })
-      return book.save()
-        .catch(error => {
-          throw new GraphQLError('Saving book failed', {
-            extensions: {
-              code: 'BAD_USER_INPUT',
-              invalidArgs: args.title,
-              error: 'Saving book failed'
+      try {
+        const book = new Book({ ...args, author: author._id })
+        console.log(book)
+        return await book.save()
+      } catch (error) {
+        throw new GraphQLError('Saving book failed', {
+          extensions: {
+            code: 'BAD_USER_INPUT',
+            invalidArgs: args.title,
+            error: error.message
           }
         })
-      })
+      }
     },
     editAuthor: async (root, args, context) => {
       const currentUser = context.currentUser
