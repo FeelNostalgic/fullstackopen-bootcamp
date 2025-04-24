@@ -135,6 +135,7 @@ type Token {
     allBooks(author: String, genre: String): [Book!]!
     allAuthors: [Author!]!
     me: User
+    allGenres: [String!]
   }
 
 type Mutation {
@@ -182,6 +183,11 @@ const resolvers = {
     me: (root, args, context) => {
       return context.currentUser
     },
+    allGenres: async () => {
+      const books = await Book.find({}).populate('author')
+      const genres = books.map(book => book.genres)
+      return Array.from(new Set(genres.flat()))
+    }
   },
   Author: {
     bookCount: async (root) => {
