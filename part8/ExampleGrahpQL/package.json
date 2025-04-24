@@ -22,7 +22,7 @@
     "express": "^5.1.0",
     "graphql": "^16.10.0",
     "graphql-subscriptions": "^3.0.0",
-    "graphql-ws": "^6.0.4",
+    "graphql-ws": "5.11.3",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.13.2",
     "react": "^19.0.0",

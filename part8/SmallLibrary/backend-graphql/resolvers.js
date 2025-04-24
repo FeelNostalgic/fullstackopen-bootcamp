@@ -1,5 +1,6 @@
 const { PubSub } = require('graphql-subscriptions')
 const pubsub = new PubSub()
+
 const Book = require('./models/book')
 const User = require('./models/user')
 const Author = require('./models/author')
@@ -81,8 +82,10 @@ const resolvers = {
 
       try {
         const book = new Book({ ...args, author: author._id })
-        pubsub.publish('BOOK_ADDED', { bookAdded: book })
-        return await book.save()
+        const savedBook = await book.save()
+        savedBook.author = author
+        pubsub.publish('BOOK_ADDED', { bookAdded: savedBook })
+        return savedBook
       } catch (error) {
         throw new GraphQLError('Saving book failed', {
           extensions: {

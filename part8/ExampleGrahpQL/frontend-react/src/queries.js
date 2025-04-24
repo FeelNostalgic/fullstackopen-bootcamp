@@ -20,7 +20,7 @@ const PERSON_DETAILS = gql`
       city
     }
   }
-`
+
 
 export const FIND_PERSON = gql`
   query findPersonByName($nameToSearch: String!) {

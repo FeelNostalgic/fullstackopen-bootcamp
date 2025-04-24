@@ -1,5 +1,5 @@
 const { WebSocketServer } = require('ws')
-const {useServer} = require('graphl-ws/lib/use/ws')
+const { useServer } = require('graphql-ws/lib/use/ws')
 
 const { ApolloServer } = require('@apollo/server')
 const { expressMiddleware } = require('@apollo/server/express4')
@@ -47,8 +47,8 @@ const start = async () => {
   })
 
   const schema = makeExecutableSchema({ typeDefs, resolvers })
-  const serverCleanup = useServer({schema}, wsServer)
-  
+  const serverCleanup = useServer({ schema }, wsServer)
+
   const server = new ApolloServer({
     schema,
     plugins: [
@@ -67,10 +67,10 @@ const start = async () => {
 
   await server.start()
 
+  app.use(cors())
+  app.use(express.json())
   app.use(
     '/',
-    cors(),
-    express.json(),
     expressMiddleware(server, {
       context: async ({ req }) => {
         const auth = req ? req.headers.authorization : null
@@ -80,7 +80,7 @@ const start = async () => {
           return { currentUser }
         }
       },
-    }),
+    })
   )
 
   const PORT = process.env.PORT || 4000
