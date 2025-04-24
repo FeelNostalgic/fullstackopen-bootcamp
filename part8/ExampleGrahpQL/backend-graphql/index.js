@@ -16,7 +16,6 @@ const jwt = require('jsonwebtoken')
 const mongoose = require('mongoose')
 const User = require('./models/user')
 
-
 const MONGODB_URI = process.env.MONGODB_URI
 
 console.log('connecting to', MONGODB_URI)
