@@ -27,4 +27,12 @@ const calculateExercises = (daily_exercises: number[], target: number): Exercise
   }
 }
 
-console.log(calculateExercises([3, 0, 2, 4.5, 0, 3, 1], 2));
+try{
+  console.log(calculateExercises(process.argv.slice(3).map(Number), Number(process.argv[2])));
+} catch (error: unknown) {
+  let errorMessage = 'Something went wrong: '
+  if (error instanceof Error) {
+    errorMessage += error.message;
+  }
+  console.log(errorMessage);
+}

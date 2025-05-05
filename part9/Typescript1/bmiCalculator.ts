@@ -8,4 +8,12 @@ const calculateBMI = (height: number, weight: number): BMI => {
   return 'Overweight'
 }
 
-console.log(calculateBMI(180, 74))
+try{
+  console.log(calculateBMI(Number(process.argv[2]), Number(process.argv[3])))
+} catch (error: unknown) {
+  let errorMessage = 'Something went wrong: '
+  if (error instanceof Error) {
+    errorMessage += error.message;
+  }
+  console.log(errorMessage);
+}
